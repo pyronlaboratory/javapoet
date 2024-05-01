@@ -39,12 +39,21 @@ import org.junit.runners.JUnit4;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * tests various aspects of reading Java files, including file location, content, and
+ * encoding. It also compiles a Java file using the Java compiler and verifies that
+ * the resulting class can be loaded and called correctly.
+ */
 @RunWith(JUnit4.class)
 public class FileReadingTest {
   
   // Used for storing compilation output.
   @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+  /**
+   * tests whether a Java file object can be converted to a URI with the correct file
+   * name and path information.
+   */
   @Test public void javaFileObjectUri() {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     assertThat(JavaFile.builder("", type).build().toJavaFileObject().toUri())
@@ -55,11 +64,18 @@ public class FileReadingTest {
         .isEqualTo(URI.create("com/example/Test.java"));
   }
   
+  /**
+   * tests whether a Java file object has source kind.
+   */
   @Test public void javaFileObjectKind() {
     JavaFile javaFile = JavaFile.builder("", TypeSpec.classBuilder("Test").build()).build();
     assertThat(javaFile.toJavaFileObject().getKind()).isEqualTo(Kind.SOURCE);
   }
   
+  /**
+   * tests whether the character content of a Java file is equal to its string
+   * representation, both with and without encoding issues.
+   */
   @Test public void javaFileObjectCharacterContent() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test")
         .addJavadoc("Pi\u00f1ata\u00a1")
@@ -73,6 +89,10 @@ public class FileReadingTest {
     assertThat(javaFileObject.getCharContent(false)).isEqualTo(javaFile.toString());
   }
   
+  /**
+   * verifies that the input stream of a Java file object is in UTF-8 format by comparing
+   * it to the file's contents as a byte array.
+   */
   @Test public void javaFileObjectInputStreamIsUtf8() throws IOException {
     JavaFile javaFile = JavaFile.builder("foo", TypeSpec.classBuilder("Test").build())
         .addFileComment("Pi\u00f1ata\u00a1")
@@ -83,6 +103,10 @@ public class FileReadingTest {
     assertThat(bytes).isEqualTo(javaFile.toString().getBytes(UTF_8));
   }
   
+  /**
+   * compiles a Java file and returns the compiled class, which can be used to call the
+   * `call()` method and retrieve the result.
+   */
   @Test public void compileJavaFile() throws Exception {
     final String value = "Hello World!";
     TypeSpec type = TypeSpec.classBuilder("Test")

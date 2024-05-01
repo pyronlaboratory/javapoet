@@ -46,6 +46,18 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+/**
+ * tests various aspects of the TypeSpec class in Kotlin, including:
+ * 
+ * 	- Creating and manipulating classes, interfaces, enums, annotations, and type variables.
+ * 	- Modifying modifiers, fields, methods, type variables, superinterfaces, and types.
+ * 	- Adding and removing Javadoc comments with trailing lines.
+ * 
+ * The tests cover various scenarios such as adding a new field or method to a class,
+ * removing an annotation from an interface, and modifying the modifiers of a class.
+ * The tests also verify that the resulting code is correct by checking the generated
+ * code against a expected output.
+ */
 @RunWith(JUnit4.class)
 public final class TypeSpecTest {
   private final String tacosPackage = "com.squareup.tacos";
@@ -53,10 +65,42 @@ public final class TypeSpecTest {
 
   @Rule public final CompilationRule compilation = new CompilationRule();
 
+  /**
+   * retrieves a `TypeElement` object representing a class type from the compilation's
+   * element set, given the class's canonical name.
+   * 
+   * @param clazz class for which the type element is being retrieved, and it is used
+   * to identify the corresponding type element in the compilation's elements map.
+   * 
+   * 	- The type of the element returned is determined by the `compilation.getElements()`
+   * method, which retrieves the elements from the compilation unit associated with the
+   * class loader that loaded the class represented by `clazz`.
+   * 	- The `getTypeElement()` method of this collection returns a `TypeElement` object
+   * representing the corresponding type in the compilation unit's type hierarchy.
+   * 	- The `canonicalName` property of `clazz` provides the fully qualified name of
+   * the class, which is used to identify the type element in the type hierarchy.
+   * 
+   * @returns a `TypeElement` object representing the type of the given class.
+   * 
+   * 	- The `TypeElement` object represents a single type declaration in the compilation
+   * unit.
+   * 	- The `Class<?>` parameter `clazz` specifies the fully qualified name of the type
+   * to be resolved.
+   * 	- The function returns the `TypeElement` object associated with the given type
+   * name, as retrieved from the `compilation.getElements()` collection.
+   * 	- The `TypeElement` object has various attributes, such as `qualifiedName`,
+   * `simpleName`, `type`, and `enclosingElement`, which provide additional information
+   * about the type declaration.
+   */
   private TypeElement getElement(Class<?> clazz) {
     return compilation.getElements().getTypeElement(clazz.getCanonicalName());
   }
 
+  /**
+   * tests the toString() method of a TypeSpec object. It compares the output of the
+   * method to the expected string value and verifies that the hash code of the object
+   * is consistent across runs.
+   */
   @Test public void basic() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("toString")
@@ -81,6 +125,10 @@ public final class TypeSpecTest {
     assertEquals(472949424, taco.hashCode()); // update expected number if source changes
   }
 
+  /**
+   * tests the ability to generate a TypeSpec with various types, including generic
+   * types, wildcard types, and super types, and verifies that the generated code is correct.
+   */
   @Test public void interestingTypes() throws Exception {
     TypeName listOfAny = ParameterizedTypeName.get(
         ClassName.get(List.class), WildcardTypeName.subtypeOf(Object.class));
@@ -109,6 +157,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the toString method of a class returns the expected string representation
+   * of the class.
+   */
   @Test public void anonymousInnerClass() throws Exception {
     ClassName foo = ClassName.get(tacosPackage, "Foo");
     ClassName bar = ClassName.get(tacosPackage, "Bar");
@@ -169,6 +221,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the annotations on method parameters are correctly generated based
+   * on the class name and parameter names.
+   */
   @Test public void annotatedParameters() throws Exception {
     TypeSpec service = TypeSpec.classBuilder("Foo")
         .addMethod(MethodSpec.constructorBuilder()
@@ -206,8 +262,7 @@ public final class TypeSpecTest {
   }
 
   /**
-   * We had a bug where annotations were preventing us from doing the right thing when resolving
-   * imports. https://github.com/square/javapoet/issues/422
+   * tests whether a class with a field annotated with `@FreeRange` is generated correctly.
    */
   @Test public void annotationsAndJavaLangTypes() throws Exception {
     ClassName freeRange = ClassName.get("javax.annotation", "FreeRange");
@@ -227,6 +282,12 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a TypeSpec interface defining a Retrofit-style service with a single
+   * method, `fooBar`, that takes an `Observable<FooBar>` as input and returns an
+   * `Observable<FooBar>` with a map of headers, query parameters, and an authorization
+   * header.
+   */
   @Test public void retrofitStyleInterface() throws Exception {
     ClassName observable = ClassName.get(tacosPackage, "Observable");
     ClassName fooBar = ClassName.get(tacosPackage, "FooBar");
@@ -285,6 +346,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests a class with a field annotated with `@JsonAdapter`, verifying that the
+   * annotation is present and that the field name matches the expected format.
+   */
   @Test public void annotatedField() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addField(FieldSpec.builder(String.class, "thing", Modifier.PRIVATE, Modifier.FINAL)
@@ -304,6 +369,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a TypeSpec builder can generate a Java class with annotations that
+   * conform to a given annotation class.
+   */
   @Test public void annotatedClass() throws Exception {
     ClassName someType = ClassName.get(tacosPackage, "SomeType");
     TypeSpec taco = TypeSpec.classBuilder("Foo")
@@ -326,6 +395,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether adding an annotation to a TypeSpec instance throws a NullPointerException
+   * when the annotation, type name, or class loader is null.
+   */
   @Test public void addAnnotationDisallowsNull() {
     try {
       TypeSpec.classBuilder("Foo").addAnnotation((AnnotationSpec) null);
@@ -347,6 +420,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * defines an enum class `Roshambo` with three constant values, each with a custom
+   * toString() method. It also defines a field and two constructors for the enum.
+   */
   @Test public void enumWithSubclassing() throws Exception {
     TypeSpec roshambo = TypeSpec.enumBuilder("Roshambo")
         .addModifiers(Modifier.PUBLIC)
@@ -405,7 +482,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
-  /** https://github.com/square/javapoet/issues/193 */
+  /**
+   * tests whether an enum can define an abstract method. It creates an enum with an
+   * abstract method and checks if the resulting code conforms to the expected format.
+   */
   @Test public void enumsMayDefineAbstractMethods() throws Exception {
     TypeSpec roshambo = TypeSpec.enumBuilder("Tortilla")
         .addModifiers(Modifier.PUBLIC)
@@ -435,6 +515,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an enum class has a constant field with no name or value.
+   */
   @Test public void noEnumConstants() throws Exception {
     TypeSpec roshambo = TypeSpec.enumBuilder("Roshambo")
             .addField(String.class, "NO_ENUM", Modifier.STATIC)
@@ -450,6 +533,10 @@ public final class TypeSpecTest {
             + "}\n");
   }
 
+  /**
+   * checks whether an class builder can create an enum constant only if it is an enum
+   * type.
+   */
   @Test public void onlyEnumsMayHaveEnumConstants() throws Exception {
     try {
       TypeSpec.classBuilder("Roshambo")
@@ -460,6 +547,11 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests an enum class with members but no constructor call. It uses the `TypeSpec`
+   * class to generate a type description and then asserts that the resulting toString()
+   * method implementation is correct.
+   */
   @Test public void enumWithMembersButNoConstructorCall() throws Exception {
     TypeSpec roshambo = TypeSpec.enumBuilder("Roshambo")
         .addEnumConstant("SPOCK", TypeSpec.anonymousClassBuilder("")
@@ -487,7 +579,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
-  /** https://github.com/square/javapoet/issues/253 */
+  /**
+   * tests whether the toString() method of an enumeration returns the expected format
+   * for an enumeration with annotated values.
+   */
   @Test public void enumWithAnnotatedValues() throws Exception {
     TypeSpec roshambo = TypeSpec.enumBuilder("Roshambo")
         .addModifiers(Modifier.PUBLIC)
@@ -512,6 +607,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests various ways in which a method can throw exceptions, including throwing
+   * different classes and using modifiers to specify the type of exception that can
+   * be thrown.
+   */
   @Test public void methodThrows() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addModifiers(Modifier.ABSTRACT)
@@ -549,6 +649,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the `Location` class, which has a single abstract method `compareTo()` and
+   * an static factory method `of()`. The test verifies that the generated code implements
+   * the expected behavior for these methods.
+   */
   @Test public void typeVariables() throws Exception {
     TypeVariableName t = TypeVariableName.get("T");
     TypeVariableName p = TypeVariableName.get("P", Number.class);
@@ -604,6 +709,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a TypeSpec can be generated with type variables that have bounds and
+   * are annotated with an AnnotationSpec.
+   */
   @Test public void typeVariableWithBounds() {
     AnnotationSpec a = AnnotationSpec.builder(ClassName.get("com.squareup.tacos", "A")).build();
     TypeVariableName p = TypeVariableName.get("P", Number.class);
@@ -627,6 +736,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the generated TypeSpec class for a Taco class that implements AbstractSet
+   * and Serializable interfaces, and is also comparable to other Tacos.
+   */
   @Test public void classImplementsExtends() throws Exception {
     ClassName taco = ClassName.get(tacosPackage, "Taco");
     ClassName food = ClassName.get("com.squareup.tacos", "Food");
@@ -648,6 +761,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the implementation of a nested class within an outer class, using Java's
+   * TypeInference feature to automatically generate the necessary type declarations.
+   */
   @Test public void classImplementsNestedClass() throws Exception {
     ClassName outer = ClassName.get(tacosPackage, "Outer");
     ClassName inner = outer.nestedClass("Inner");
@@ -671,6 +788,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests an enumeration type implementation of Serializable and Cloneable interfaces,
+   * adding constants and building the type specification to verify the output equals
+   * the expected code structure.
+   */
   @Test public void enumImplements() throws Exception {
     TypeSpec typeSpec = TypeSpec.enumBuilder("Food")
         .addSuperinterface(Serializable.class)
@@ -691,6 +813,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the syntax for an interface that extends two interfaces: `Serializable` and
+   * `Comparable`.
+   */
   @Test public void interfaceExtends() throws Exception {
     ClassName taco = ClassName.get(tacosPackage, "Taco");
     TypeSpec typeSpec = TypeSpec.interfaceBuilder("Taco")
@@ -707,6 +833,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a TypeSpec that defines a class hierarchy with a nested class structure,
+   * consisting of a parent class with three fields and two inner classes: one for
+   * toppings and another for sauce.
+   */
   @Test public void nestedClasses() throws Exception {
     ClassName taco = ClassName.get(tacosPackage, "Combo", "Taco");
     ClassName topping = ClassName.get(tacosPackage, "Combo", "Taco", "Topping");
@@ -780,6 +911,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a TypeSpec object representing an annotation type with a single method
+   * called `test`. The method has no return type and default value of 0.
+   */
   @Test public void annotation() throws Exception {
     TypeSpec annotation = TypeSpec.annotationBuilder("MyAnnotation")
         .addModifiers(Modifier.PUBLIC)
@@ -799,6 +934,9 @@ public final class TypeSpecTest {
     );
   }
 
+  /**
+   * tests whether an inner annotation can be declared within an annotation declaration.
+   */
   @Test public void innerAnnotationInAnnotationDeclaration() throws Exception {
     TypeSpec bar = TypeSpec.annotationBuilder("Bar")
         .addMethod(MethodSpec.methodBuilder("value")
@@ -819,6 +957,10 @@ public final class TypeSpecTest {
     );
   }
 
+  /**
+   * tests whether an annotation with fields is generated correctly by checking its
+   * toString representation against a expected output.
+   */
   @Test public void annotationWithFields() {
     FieldSpec field = FieldSpec.builder(int.class, "FOO")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
@@ -838,6 +980,9 @@ public final class TypeSpecTest {
     );
   }
 
+  /**
+   * tests whether a class can have a default value for a method.
+   */
   @Test
   public void classCannotHaveDefaultValueForMethod() throws Exception {
     try {
@@ -853,6 +998,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * attempts to create a class with a default method, which is prohibited in Java. If
+   * successful, it throws an `IllegalStateException`.
+   */
   @Test
   public void classCannotHaveDefaultMethods() throws Exception {
     try {
@@ -868,6 +1017,9 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests an interface with a static method named `test`.
+   */
   @Test
   public void interfaceStaticMethods() throws Exception {
     TypeSpec bar = TypeSpec.interfaceBuilder("Tacos")
@@ -889,6 +1041,10 @@ public final class TypeSpecTest {
     );
   }
 
+  /**
+   * tests whether the default methods are generated correctly for an interface. It
+   * compares the expected output with the actual code generated by the `TypeSpec` builder.
+   */
   @Test
   public void interfaceDefaultMethods() throws Exception {
     TypeSpec bar = TypeSpec.interfaceBuilder("Tacos")
@@ -910,6 +1066,10 @@ public final class TypeSpecTest {
     );
   }
 
+  /**
+   * tests whether attempting to define private methods on an interface throws the
+   * appropriate exceptions.
+   */
   @Test
   public void invalidInterfacePrivateMethods() {
     try {
@@ -948,6 +1108,11 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests the creation and usage of private methods in Java interfaces. It generates
+   * a sample interface with a private method and then verifies that the generated code
+   * reflects the expected behavior of private methods in an interface.
+   */
   @Test
   public void interfacePrivateMethods() {
     TypeSpec bar = TypeSpec.interfaceBuilder("Tacos")
@@ -987,6 +1152,11 @@ public final class TypeSpecTest {
     );
   }
 
+  /**
+   * tests the conflict between referenced and declared simple names in Java. It builds
+   * a type hierarchy with conflicting names and checks the resulting code snippet for
+   * correctness.
+   */
   @Test public void referencedAndDeclaredSimpleNamesConflict() throws Exception {
     FieldSpec internalTop = FieldSpec.builder(
         ClassName.get(tacosPackage, "Top"), "internalTop").build();
@@ -1050,6 +1220,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether field names conflict when they are defined in different packages
+   * using the same simple name.
+   */
   @Test public void simpleNamesConflictInThisAndOtherPackage() throws Exception {
     FieldSpec internalOther = FieldSpec.builder(
         ClassName.get(tacosPackage, "Other"), "internalOther").build();
@@ -1069,6 +1243,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the generation of a Java class with simple names conflicting with type
+   * variables, and checks that the generated code includes the expected method signatures
+   * and behavior.
+   */
   @Test public void simpleNameConflictsWithTypeVariable() {
     ClassName inPackage = ClassName.get("com.squareup.tacos", "InPackage");
     ClassName otherType = ClassName.get("com.other", "OtherType");
@@ -1137,6 +1316,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * checks if an outer type element includes those of its nested types.
+   */
   @Test public void originatingElementsIncludesThoseOfNestedTypes() {
     Element outerElement = Mockito.mock(Element.class);
     Element innerElement = Mockito.mock(Element.class);
@@ -1149,6 +1331,9 @@ public final class TypeSpecTest {
     assertThat(outer.originatingElements).containsExactly(outerElement, innerElement);
   }
 
+  /**
+   * tests the `getComparator()` method of a `Taco` class, which returns `null`.
+   */
   @Test public void intersectionType() {
     TypeVariableName typeVariable = TypeVariableName.get("T", Comparator.class, Serializable.class);
     TypeSpec taco = TypeSpec.classBuilder("Taco")
@@ -1171,6 +1356,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a `TypeSpec` instance represents an array type with the specified
+   * component type.
+   */
   @Test public void arrayType() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addField(int[].class, "ints")
@@ -1183,6 +1372,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates Javadoc for a Java class, including fields and methods. It mentions types
+   * in Javadoc without adding imports, but uses the short name if already imported.
+   */
   @Test public void javadoc() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addJavadoc("A hard or soft tortilla, loosely folded and filled with whatever {@link \n")
@@ -1226,6 +1419,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an annotation can reference another annotation within its own
+   * annotation list.
+   */
   @Test public void annotationsInAnnotations() throws Exception {
     ClassName beef = ClassName.get(tacosPackage, "Beef");
     ClassName chicken = ClassName.get(tacosPackage, "Chicken");
@@ -1258,6 +1455,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * prepares a method to take an arbitrary number of `Runnable` objects as parameters.
+   */
   @Test public void varargs() throws Exception {
     TypeSpec taqueria = TypeSpec.classBuilder("Taqueria")
         .addMethod(MethodSpec.methodBuilder("prepare")
@@ -1277,6 +1477,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a map of common prefixes between two lists of strings, using a for loop
+   * to iterate through the lists and compare each element. It then returns the length
+   * of the common prefix.
+   */
   @Test public void codeBlocks() throws Exception {
     CodeBlock ifBlock = CodeBlock.builder()
         .beginControlFlow("if (!a.equals(b))")
@@ -1348,6 +1553,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * in Java is used to execute different blocks of code based on the values of multiple
+   * variables.
+   */
   @Test public void indexedElseIf() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("choices")
@@ -1374,6 +1583,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a piece of code that prints "hello" if the condition 5 is less than 6,
+   * and prints "wat" otherwise.
+   */
   @Test public void elseIf() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("choices")
@@ -1400,6 +1613,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * iterates indefinitely, printing "hello" to the console on each iteration until a
+   * condition is met.
+   */
   @Test public void doWhile() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("loopForever")
@@ -1422,6 +1639,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * checks if 3 is less than 4 and prints "hello" to System.out if it is.
+   */
   @Test public void inlineIndent() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("inlineIndent")
@@ -1442,6 +1662,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java interface with fields, methods, and classes. The generated code
+   * includes the default modifiers for each member (public, static, final) and initializes
+   * a field with a non-null value.
+   */
   @Test public void defaultModifiersForInterfaceMembers() throws Exception {
     TypeSpec taco = TypeSpec.interfaceBuilder("Taco")
         .addField(FieldSpec.builder(String.class, "SHELL")
@@ -1470,6 +1695,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java code snippet that defines a class and interfaces with default
+   * modifiers for static members, and an enum with default modifiers for static constants.
+   */
   @Test public void defaultModifiersForMemberInterfacesAndEnums() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addType(TypeSpec.classBuilder("Meat")
@@ -1499,6 +1728,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the ordering of members in a Java class, including static fields, instance
+   * fields, constructors, methods, and classes.
+   */
   @Test public void membersOrdering() throws Exception {
     // Hand out names in reverse-alphabetical order to defend against unexpected sorting.
     TypeSpec taco = TypeSpec.classBuilder("Members")
@@ -1556,6 +1789,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the native methods and GWT JSNI in a Java class.
+   */
   @Test public void nativeMethods() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("nativeInt")
@@ -1589,6 +1825,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the creation and usage of a null string literal in Java code using the
+   * TypeSpec class builder.
+   */
   @Test public void nullStringLiteral() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addField(FieldSpec.builder(String.class, "NULL")
@@ -1605,6 +1845,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the toString() method of an annotation object returns the expected
+   * string representation, which is `@java.lang.SuppressWarnings("unused")`.
+   */
   @Test public void annotationToString() throws Exception {
     AnnotationSpec annotation = AnnotationSpec.builder(SuppressWarnings.class)
         .addMember("value", "$S", "unused")
@@ -1612,6 +1856,9 @@ public final class TypeSpecTest {
     assertThat(annotation.toString()).isEqualTo("@java.lang.SuppressWarnings(\"unused\")");
   }
 
+  /**
+   * converts a `CodeBlock` object into a string representation of its code.
+   */
   @Test public void codeBlockToString() throws Exception {
     CodeBlock codeBlock = CodeBlock.builder()
         .addStatement("$T $N = $S.substring(0, 3)", String.class, "s", "taco")
@@ -1619,12 +1866,21 @@ public final class TypeSpecTest {
     assertThat(codeBlock.toString()).isEqualTo("java.lang.String s = \"taco\".substring(0, 3);\n");
   }
 
+  /**
+   * takes a `CodeBlock` object as input and returns its corresponding Java statement
+   * as a string.
+   */
   @Test public void codeBlockAddStatementOfCodeBlockToString() throws Exception {
     CodeBlock contents = CodeBlock.of("$T $N = $S.substring(0, 3)", String.class, "s", "taco");
     CodeBlock statement = CodeBlock.builder().addStatement(contents).build();
     assertThat(statement.toString()).isEqualTo("java.lang.String s = \"taco\".substring(0, 3);\n");
   }
 
+  /**
+   * tests a `FieldSpec` object that represents a field with the name "s" and the type
+   * "String". It asserts that the toString() method of the field returns the expected
+   * string value.
+   */
   @Test public void fieldToString() throws Exception {
     FieldSpec field = FieldSpec.builder(String.class, "s", Modifier.FINAL)
         .initializer("$S.substring(0, 3)", "taco")
@@ -1633,6 +1889,10 @@ public final class TypeSpecTest {
         .isEqualTo("final java.lang.String s = \"taco\".substring(0, 3);\n");
   }
 
+  /**
+   * generates a method signature string that includes information about the method,
+   * such as its name, return type, and annotations.
+   */
   @Test public void methodToString() throws Exception {
     MethodSpec method = MethodSpec.methodBuilder("toString")
         .addAnnotation(Override.class)
@@ -1647,6 +1907,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the constructor string is correctly generated for a given methodSpec
+   * object.
+   */
   @Test public void constructorToString() throws Exception {
     MethodSpec constructor = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PUBLIC)
@@ -1659,6 +1923,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the toString() method of a ParameterSpec object returns the expected
+   * string value, which is `@javax.annotation.Nullable final com.squareup.tacos.Taco
+   * taco`.
+   */
   @Test public void parameterToString() throws Exception {
     ParameterSpec parameter = ParameterSpec.builder(ClassName.get(tacosPackage, "Taco"), "taco")
         .addModifiers(Modifier.FINAL)
@@ -1668,6 +1937,10 @@ public final class TypeSpecTest {
         .isEqualTo("@javax.annotation.Nullable final com.squareup.tacos.Taco taco");
   }
 
+  /**
+   * tests whether the toString() method of a TypeSpec object returns the correct string
+   * representation of the class.
+   */
   @Test public void classToString() throws Exception {
     TypeSpec type = TypeSpec.classBuilder("Taco")
         .build();
@@ -1676,6 +1949,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the toString method of a TypeSpec object generates the expected
+   * output for an anonymous class that implements the Runnable interface and has a
+   * single method override annotation.
+   */
   @Test public void anonymousClassToString() throws Exception {
     TypeSpec type = TypeSpec.anonymousClassBuilder("")
         .addSuperinterface(Runnable.class)
@@ -1692,6 +1970,10 @@ public final class TypeSpecTest {
         + "}");
   }
 
+  /**
+   * tests whether an interface type's toString() method returns a string representing
+   * its definition.
+   */
   @Test public void interfaceClassToString() throws Exception {
     TypeSpec type = TypeSpec.interfaceBuilder("Taco")
         .build();
@@ -1700,6 +1982,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * converts a `TypeSpec` object representing an annotation to its string representation,
+   * which includes the annotation name and a blank line.
+   */
   @Test public void annotationDeclarationToString() throws Exception {
     TypeSpec type = TypeSpec.annotationBuilder("Taco")
         .build();
@@ -1708,10 +1994,29 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a string representation of a `TypeSpec` object by building a Java file
+   * containing the `TypeSpec` and then returning its resulting string representation.
+   * 
+   * @param typeSpec TypeSpec object that contains information about the Java class or
+   * interface to be generated by the toString() method.
+   * 
+   * 	- The method returns a string representation of a Java file built from the
+   * `typeSpec` parameter using the `JavaFile.builder` method.
+   * 	- The `tacosPackage` parameter represents the package of the generated Java class.
+   * 	- The `typeSpec` parameter is an instance of `TypeSpec`, which contains information
+   * about the type to be generated, including its name, fields, and methods.
+   * 
+   * @returns a string representation of the generated Java code.
+   */
   private String toString(TypeSpec typeSpec) {
     return JavaFile.builder(tacosPackage, typeSpec).build().toString();
   }
 
+  /**
+   * generates a string that represents the toString() method of a class named Taco,
+   * with the method body consisting of multiple lines.
+   */
   @Test public void multilineStatement() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("toString")
@@ -1740,6 +2045,13 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the functionality of a custom comparator class that sorts strings based on
+   * a prefix comparison. It creates an anonymous inner class with a single method that
+   * overrides the `compareTo()` method and compares two strings based on their prefix.
+   * The function also implements another method to sort a list of strings using the
+   * custom comparator.
+   */
   @Test public void multilineStatementWithAnonymousClass() throws Exception {
     TypeName stringComparator = ParameterizedTypeName.get(Comparator.class, String.class);
     TypeName listOfString = ParameterizedTypeName.get(List.class, String.class);
@@ -1801,6 +2113,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a `TypeSpec` object can contain multiline strings by creating a
+   * `Taco` class with a field containing a multiline string and checking that the
+   * resulting code matches the expected output.
+   */
   @Test public void multilineStrings() throws Exception {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addField(FieldSpec.builder(String.class, "toppings")
@@ -1820,6 +2137,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether attempting to initialize a field with multiple initializers results
+   * in an IllegalStateException.
+   */
   @Test public void doubleFieldInitialization() {
     try {
       FieldSpec.builder(String.class, "listA")
@@ -1840,6 +2161,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether attempting to add annotations to a TypeSpec with null annotations
+   * will throw an `IllegalArgumentException`.
+   */
   @Test public void nullAnnotationsAddition() {
     try {
       TypeSpec.classBuilder("Taco").addAnnotations(null);
@@ -1850,6 +2175,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether a class builder can add multiple annotations to a class using the
+   * `addAnnotations()` method.
+   */
   @Test public void multipleAnnotationAddition() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addAnnotations(Arrays.asList(
@@ -1870,6 +2199,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an attempt to build a TypeSpec with null field specifications will
+   * throw an IllegalArgumentException.
+   */
   @Test public void nullFieldsAddition() {
     try {
       TypeSpec.classBuilder("Taco").addFields(null);
@@ -1880,6 +2213,9 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests a class with multiple fields using JUnit.
+   */
   @Test public void multipleFieldAddition() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addFields(Arrays.asList(
@@ -1898,6 +2234,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an attempt to add methods to a `TypeSpec` object with null method
+   * specifications will result in an `IllegalArgumentException`.
+   */
   @Test public void nullMethodsAddition() {
     try {
       TypeSpec.classBuilder("Taco").addMethods(null);
@@ -1908,6 +2248,11 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * adds multiple methods to a class using the `TypeSpec` builder. The added methods
+   * include `getAnswer()` and `getRandomQuantity()`, which return integers values
+   * respectively, 42 and 4.
+   */
   @Test public void multipleMethodAddition() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethods(Arrays.asList(
@@ -1940,6 +2285,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether adding a null value to an existing list of super interfaces in a
+   * class builder throws an `IllegalArgumentException`.
+   */
   @Test public void nullSuperinterfacesAddition() {
     try {
       TypeSpec.classBuilder("Taco").addSuperinterfaces(null);
@@ -1950,6 +2299,9 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether adding a null superinterface to a class builder results in an `IllegalArgumentException`.
+   */
   @Test public void nullSingleSuperinterfaceAddition() {
     try {
       TypeSpec.classBuilder("Taco").addSuperinterface((TypeName) null);
@@ -1960,6 +2312,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether attempting to add a null object to an iterable list of superinterfaces
+   * in a class builder throws an expected IllegalArgumentException.
+   */
   @Test public void nullInSuperinterfaceIterableAddition() {
     List<TypeName> superinterfaces = new ArrayList<>();
     superinterfaces.add(TypeName.get(List.class));
@@ -1974,6 +2330,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests the addition of multiple superinterfaces to a class using the `TypeSpec`
+   * class builder.
+   */
   @Test public void multipleSuperinterfaceAddition() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addSuperinterfaces(Arrays.asList(
@@ -1990,6 +2350,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether adding a null value to a `TypeSpec.Builder` throws an `IllegalArgumentException`.
+   */
   @Test public void nullModifiersAddition() {
     try {
       TypeSpec.classBuilder("Taco").addModifiers((Modifier) null).build();
@@ -2000,6 +2363,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether an attempt to add type variables to a TypeSpec object with null type
+   * variables throws an IllegalArgumentException.
+   */
   @Test public void nullTypeVariablesAddition() {
     try {
       TypeSpec.classBuilder("Taco").addTypeVariables(null);
@@ -2010,6 +2377,11 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether a `TypeSpec` builder can add multiple type variables to a class,
+   * including one that is a generic type variable with a parameter of a specific type
+   * (in this case, `Number`).
+   */
   @Test public void multipleTypeVariableAddition() {
     TypeSpec location = TypeSpec.classBuilder("Location")
         .addTypeVariables(Arrays.asList(
@@ -2025,6 +2397,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an `IllegalArgumentException` is thrown when a `TypeSpec.Builder`
+   * is called with a null `typeSpecs` parameter.
+   */
   @Test public void nullTypesAddition() {
     try {
       TypeSpec.classBuilder("Taco").addTypes(null);
@@ -2035,6 +2411,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether a type builder can add multiple types to a base type successfully,
+   * by creating a type specification with nested types and verifying its toString representation.
+   */
   @Test public void multipleTypeAddition() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addTypes(Arrays.asList(
@@ -2053,6 +2433,11 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a TypeSpec representation of a Java class that has a method for adding
+   * toppings to an instance of a `Taco` class. The method includes a `try-catch` block
+   * that handles an `IllegalToppingException`.
+   */
   @Test public void tryCatch() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(MethodSpec.methodBuilder("addTopping")
@@ -2077,6 +2462,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * builds a method that takes an integer parameter 'count' and returns a boolean value
+   * indicating whether the count is greater than 0.
+   */
   @Test public void ifElse() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addMethod(
@@ -2105,8 +2494,17 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a `CodeBlock` object can be generated from any object using the
+   * `toString()` method.
+   */
   @Test public void literalFromAnything() {
     Object value = new Object() {
+      /**
+       * returns the string "foo".
+       * 
+       * @returns "foo".
+       */
       @Override public String toString() {
         return "foo";
       }
@@ -2114,20 +2512,34 @@ public final class TypeSpecTest {
     assertThat(CodeBlock.of("$L", value).toString()).isEqualTo("foo");
   }
 
+  /**
+   * takes a `CharSequence` object and returns its corresponding string value.
+   */
   @Test public void nameFromCharSequence() {
     assertThat(CodeBlock.of("$N", "text").toString()).isEqualTo("text");
   }
 
+  /**
+   * takes a `FieldSpec` object as input and returns the field's name in a string format.
+   */
   @Test public void nameFromField() {
     FieldSpec field = FieldSpec.builder(String.class, "field").build();
     assertThat(CodeBlock.of("$N", field).toString()).isEqualTo("field");
   }
 
+  /**
+   * takes a `ParameterSpec` object as input and returns the name of the parameter
+   * passed in the builder.
+   */
   @Test public void nameFromParameter() {
     ParameterSpec parameter = ParameterSpec.builder(String.class, "parameter").build();
     assertThat(CodeBlock.of("$N", parameter).toString()).isEqualTo("parameter");
   }
 
+  /**
+   * generates a string representation of a `MethodSpec`. The resulting string is the
+   * name of the method as defined in the code block.
+   */
   @Test public void nameFromMethod() {
     MethodSpec method = MethodSpec.methodBuilder("method")
         .addModifiers(Modifier.ABSTRACT)
@@ -2136,11 +2548,18 @@ public final class TypeSpecTest {
     assertThat(CodeBlock.of("$N", method).toString()).isEqualTo("method");
   }
 
+  /**
+   * takes a `TypeSpec` object as input and returns its string representation, which
+   * is simply the class name of the type builder.
+   */
   @Test public void nameFromType() {
     TypeSpec type = TypeSpec.classBuilder("Type").build();
     assertThat(CodeBlock.of("$N", type).toString()).isEqualTo("Type");
   }
 
+  /**
+   * attempts to generate a name for an object of an unsupported type, throwing an `IllegalArgumentException`.
+   */
   @Test public void nameFromUnsupportedType() {
     try {
       CodeBlock.builder().add("$N", String.class);
@@ -2150,8 +2569,17 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * verifies that a `CodeBlock` instance created from an arbitrary object can be
+   * converted to a string with the expected value.
+   */
   @Test public void stringFromAnything() {
     Object value = new Object() {
+      /**
+       * returns the literal string "foo".
+       * 
+       * @returns "foo".
+       */
       @Override public String toString() {
         return "foo";
       }
@@ -2159,29 +2587,53 @@ public final class TypeSpecTest {
     assertThat(CodeBlock.of("$S", value).toString()).isEqualTo("\"foo\"");
   }
 
+  /**
+   * asserts that a `CodeBlock` containing a `String` literal with null value returns
+   * "null" when converted to a string.
+   */
   @Test public void stringFromNull() {
     assertThat(CodeBlock.of("$S", new Object[] {null}).toString()).isEqualTo("null");
   }
 
+  /**
+   * takes a `TypeName` object as input and returns the corresponding fully qualified
+   * class name of the type represented by the `TypeName`.
+   */
   @Test public void typeFromTypeName() {
     TypeName typeName = TypeName.get(String.class);
     assertThat(CodeBlock.of("$T", typeName).toString()).isEqualTo("java.lang.String");
   }
 
+  /**
+   * takes a `TypeMirror` object and returns its underlying type as a string, which is
+   * verified to be equal to "java.lang.String".
+   */
   @Test public void typeFromTypeMirror() {
     TypeMirror mirror = getElement(String.class).asType();
     assertThat(CodeBlock.of("$T", mirror).toString()).isEqualTo("java.lang.String");
   }
 
+  /**
+   * verifies that the toString() method of a `TypeElement` object returns the fully
+   * qualified name of the corresponding class, in this case `java.lang.String`.
+   */
   @Test public void typeFromTypeElement() {
     TypeElement element = getElement(String.class);
     assertThat(CodeBlock.of("$T", element).toString()).isEqualTo("java.lang.String");
   }
 
+  /**
+   * evaluates a string representing a Class object and returns the corresponding Class
+   * type.
+   */
   @Test public void typeFromReflectType() {
     assertThat(CodeBlock.of("$T", String.class).toString()).isEqualTo("java.lang.String");
   }
 
+  /**
+   * tests whether an attempt to use an unsupported type in a `CodeBlock.builder()`
+   * method will result in an `IllegalArgumentException` with a specific message.
+   */
   @Test public void typeFromUnsupportedType() {
     try {
       CodeBlock.builder().add("$T", "java.lang.String");
@@ -2191,6 +2643,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether an IllegalArgumentException is thrown when too few arguments are
+   * passed to a method that expects at least one argument.
+   */
   @Test public void tooFewArguments() {
     try {
       CodeBlock.builder().add("$S");
@@ -2200,6 +2656,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether an IllegalArgumentException is thrown when unused arguments are
+   * passed to a method.
+   */
   @Test public void unusedArgumentsRelative() {
     try {
       CodeBlock.builder().add("$L $L", "a", "b", "c");
@@ -2209,6 +2669,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether the `CodeBlock.builder()` method throws an `IllegalArgumentException`
+   * when unused arguments are provided in a call to its `add()` method.
+   */
   @Test public void unusedArgumentsIndexed() {
     try {
       CodeBlock.builder().add("$1L $2L", "a", "b", "c");
@@ -2230,6 +2694,9 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether a superclass can only be applied to classes, not to enums or interfaces.
+   */
   @Test public void superClassOnlyValidForClasses() {
     try {
       TypeSpec.annotationBuilder("A").superclass(ClassName.get(Object.class));
@@ -2248,6 +2715,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests if attempting to set a superclass that is not a subclass of another class
+   * will fail, and if setting an invalid superclass will throw an exception.
+   */
   @Test public void invalidSuperClass() {
     try {
       TypeSpec.classBuilder("foo")
@@ -2264,6 +2735,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * generates code for a class `Taco`, including a static block that sets the value
+   * of a private field `FOO`, and a method `toString` that returns the value of `FOO`.
+   */
   @Test public void staticCodeBlock() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addField(String.class, "foo", Modifier.PRIVATE)
@@ -2300,6 +2775,12 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an initializer block is placed correctly in a class. It creates a
+   * `TypeSpec` representing a `Taco` class with an initializer block and a static
+   * block, and then verifies that the output of the toString() method is equal to the
+   * value of the FOO static field.
+   */
   @Test public void initializerBlockInRightPlace() {
     TypeSpec taco = TypeSpec.classBuilder("Taco")
         .addField(String.class, "foo", Modifier.PRIVATE)
@@ -2347,6 +2828,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests if toBuilder() method contains correct static and instance initializers for
+   * a given TypeSpec.
+   */
   @Test public void initializersToBuilder() {
     // Tests if toBuilder() contains correct static and instance initializers
     Element originatingElement = getElement(TypeSpecTest.class);
@@ -2421,6 +2906,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an exception is thrown when attempting to add an initializer block
+   * to an interface using `TypeSpec.Builder`.
+   */
   @Test public void initializerBlockUnsupportedExceptionOnInterface() {
     TypeSpec.Builder interfaceBuilder = TypeSpec.interfaceBuilder("Taco");
     try {
@@ -2430,6 +2919,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * tests whether an exception is thrown when an initializer block is added to an
+   * annotation using the `TypeSpec.builder().addInitializerBlock()` method.
+   */
   @Test public void initializerBlockUnsupportedExceptionOnAnnotation() {
     TypeSpec.Builder annotationBuilder = TypeSpec.annotationBuilder("Taco");
     try {
@@ -2439,6 +2932,10 @@ public final class TypeSpecTest {
     }
   }
 
+  /**
+   * takes multiple string parameters and calls a method with them, wrapping each
+   * parameter on a new line for readability.
+   */
   @Test public void lineWrapping() {
     MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("call");
     methodBuilder.addCode("$[call(");
@@ -2468,6 +2965,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * wraps a line of text within a method call using a zero-width space character.
+   */
   @Test public void lineWrappingWithZeroWidthSpace() {
     MethodSpec method = MethodSpec.methodBuilder("call")
         .addCode("$[iAmSickOfWaitingInLine($Z")
@@ -2490,6 +2990,10 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the equality and hash code generation of different types, including interfaces,
+   * classes, enums, and annotations, using assertions to verify the results.
+   */
   @Test public void equalsAndHashCode() {
     TypeSpec a = TypeSpec.interfaceBuilder("taco").build();
     TypeSpec b = TypeSpec.interfaceBuilder("taco").build();
@@ -2509,6 +3013,10 @@ public final class TypeSpecTest {
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
   }
 
+  /**
+   * tests the ability to create classes, interfaces, enums and annotations with the
+   * `ClassName` class.
+   */
   @Test public void classNameFactories() {
     ClassName className = ClassName.get("com.example", "Example");
     assertThat(TypeSpec.classBuilder(className).build().name).isEqualTo("Example");
@@ -2517,6 +3025,11 @@ public final class TypeSpecTest {
     assertThat(TypeSpec.annotationBuilder(className).build().name).isEqualTo("Example");
   }
 
+  /**
+   * modifies an instance of `TypeSpec.Builder`, adding and removing annotations. It
+   * then builds the resulting annotated type and checks its size to verify the
+   * modifications were successful.
+   */
   @Test
   public void modifyAnnotations() {
     TypeSpec.Builder builder =
@@ -2528,6 +3041,10 @@ public final class TypeSpecTest {
     assertThat(builder.build().annotations).hasSize(1);
   }
 
+  /**
+   * alters the modifiers of a `TypeSpec` object, specifically removing one modifier
+   * and ensuring that the resulting modifiers list contains only the `PUBLIC` modifier.
+   */
   @Test
   public void modifyModifiers() {
     TypeSpec.Builder builder =
@@ -2537,6 +3054,10 @@ public final class TypeSpecTest {
     assertThat(builder.build().modifiers).containsExactly(Modifier.PUBLIC);
   }
 
+  /**
+   * modifies a TypeSpec instance representing a class named "Taco". It removes one of
+   * the fields from the TypeSpec and verifies that the resulting field specs are empty.
+   */
   @Test
   public void modifyFields() {
     TypeSpec.Builder builder = TypeSpec.classBuilder("Taco")
@@ -2546,6 +3067,10 @@ public final class TypeSpecTest {
     assertThat(builder.build().fieldSpecs).isEmpty();
   }
 
+  /**
+   * modifies a TypeSpec object's type variables, removing and adding new variables as
+   * needed.
+   */
   @Test
   public void modifyTypeVariables() {
     TypeVariableName t = TypeVariableName.get("T");
@@ -2558,6 +3083,10 @@ public final class TypeSpecTest {
     assertThat(builder.build().typeVariables).containsExactly(t);
   }
 
+  /**
+   * modifies a `TypeSpec` instance to remove all superinterfaces and verifies that the
+   * resulting `TypeSpec` instance has an empty set of superinterfaces.
+   */
   @Test
   public void modifySuperinterfaces() {
     TypeSpec.Builder builder = TypeSpec.classBuilder("Taco")
@@ -2567,6 +3096,9 @@ public final class TypeSpecTest {
     assertThat(builder.build().superinterfaces).isEmpty();
   }
 
+  /**
+   * clears and empties the method specs of a `TypeSpec`.
+   */
   @Test
   public void modifyMethods() {
     TypeSpec.Builder builder = TypeSpec.classBuilder("Taco")
@@ -2576,6 +3108,10 @@ public final class TypeSpecTest {
     assertThat(builder.build().methodSpecs).isEmpty();
   }
 
+  /**
+   * modifies a TypeSpec builder to remove all type specs and then builds the TypeSpec
+   * instance. It returns an empty list of type specs after building the instance.
+   */
   @Test
   public void modifyTypes() {
     TypeSpec.Builder builder = TypeSpec.classBuilder("Taco")
@@ -2585,6 +3121,11 @@ public final class TypeSpecTest {
     assertThat(builder.build().typeSpecs).isEmpty();
   }
 
+  /**
+   * modifies an existing enum class with new constants, removes a existing constant,
+   * and verifies that the updated enum constants are correctly reflected in the resulting
+   * enum class.
+   */
   @Test
   public void modifyEnumConstants() {
     TypeSpec constantType = TypeSpec.anonymousClassBuilder("").build();
@@ -2596,6 +3137,11 @@ public final class TypeSpecTest {
     assertThat(builder.build().enumConstants).containsExactly("BELL", constantType);
   }
 
+  /**
+   * modifies the originating elements of a `TypeSpec` builder by clearing its internal
+   * list and then verifying that the resulting `TypeSpec` instance contains no originating
+   * elements.
+   */
   @Test
   public void modifyOriginatingElements() {
     TypeSpec.Builder builder = TypeSpec.classBuilder("Taco")
@@ -2605,6 +3151,10 @@ public final class TypeSpecTest {
     assertThat(builder.build().originatingElements).isEmpty();
   }
     
+  /**
+   * tests whether adding a newline to Javadoc documentation does not result in an
+   * additional line being added to the generated code.
+   */
   @Test public void javadocWithTrailingLineDoesNotAddAnother() {
     TypeSpec spec = TypeSpec.classBuilder("Taco")
         .addJavadoc("Some doc with a newline\n")
@@ -2620,6 +3170,9 @@ public final class TypeSpecTest {
         + "}\n");
   }
 
+  /**
+   * verifies that a generated Javadoc comment has a trailing line break.
+   */
   @Test public void javadocEnsuresTrailingLine() {
     TypeSpec spec = TypeSpec.classBuilder("Taco")
         .addJavadoc("Some doc with a newline")

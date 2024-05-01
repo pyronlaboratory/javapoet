@@ -21,8 +21,24 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+/**
+ * tests various features of the NameAllocator class, including:
+ * 
+ * 	- Usage and naming collisions
+ * 	- Name collision with tags
+ * 	- Character mapping substitutes and surrogates
+ * 	- Invalid start characters for character mapping
+ * 	- Java keywords as names
+ * 	- Tag reuse forbidden
+ * 	- Use before allocation forbidden
+ * 	- Clone usage
+ */
 public final class NameAllocatorTest {
 
+  /**
+   * tests the NameAllocator class by checking that new names are generated correctly
+   * and retrieved properly.
+   */
   @Test public void usage() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo");
@@ -31,6 +47,10 @@ public final class NameAllocatorTest {
     assertThat(nameAllocator.get(2)).isEqualTo("bar");
   }
 
+  /**
+   * tests the behavior of a `NameAllocator` class by assigning unique names to the
+   * same string multiple times and verifying that the resulting names are different.
+   */
   @Test public void nameCollision() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("foo")).isEqualTo("foo");
@@ -38,6 +58,10 @@ public final class NameAllocatorTest {
     assertThat(nameAllocator.newName("foo")).isEqualTo("foo__");
   }
 
+  /**
+   * tests the NameAllocator class's ability to handle name collisions by assigning
+   * unique tags to repeated names.
+   */
   @Test public void nameCollisionWithTag() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("foo", 1)).isEqualTo("foo");
@@ -48,33 +72,61 @@ public final class NameAllocatorTest {
     assertThat(nameAllocator.get(3)).isEqualTo("foo__");
   }
 
+  /**
+   * tests whether a name allocated by a `NameAllocator` is substituted correctly. It
+   * passes a string "a-b" to the `newName` method and asserts that the resulting name
+   * is "a_b".
+   */
   @Test public void characterMappingSubstitute() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("a-b", 1)).isEqualTo("a_b");
   }
 
+  /**
+   * tests whether a name allocator returns the expected surrogate value when given a
+   * Unicode code point representing a surrogate pair.
+   */
   @Test public void characterMappingSurrogate() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("a\uD83C\uDF7Ab", 1)).isEqualTo("a_b");
   }
 
+  /**
+   * tests if the `NameAllocator` class can map invalid input to valid output, specifically
+   * starting a character with a hyphen (-) but having a valid part after it.
+   */
   @Test public void characterMappingInvalidStartButValidPart() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("1ab", 1)).isEqualTo("_1ab");
     assertThat(nameAllocator.newName("a-1", 2)).isEqualTo("a_1");
   }
 
+  /**
+   * tests whether a valid character mapping can be generated for an invalid starting
+   * character. It does this by providing an input string of "&ab" and expecting the
+   * output to be "_ab".
+   */
   @Test public void characterMappingInvalidStartIsInvalidPart() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("&ab", 1)).isEqualTo("_ab");
   }
 
+  /**
+   * tests whether a `NameAllocator` instance can allocate and retrieve unique names
+   * for a given prefix. It does so by assigning a name to an object, checking if the
+   * same name is retrieved later, and asserting that it has not been modified.
+   */
   @Test public void javaKeyword() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     assertThat(nameAllocator.newName("public", 1)).isEqualTo("public_");
     assertThat(nameAllocator.get(1)).isEqualTo("public_");
   }
 
+  /**
+   * tests whether a tag can be reused for different names in Java. It does this by
+   * attempting to allocate a new name with an existing tag and checking if an exception
+   * is thrown.
+   */
   @Test public void tagReuseForbidden() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     nameAllocator.newName("foo", 1);
@@ -86,6 +138,10 @@ public final class NameAllocatorTest {
     }
   }
 
+  /**
+   * tests whether attempting to use a name before allocating it is forbidden by throwing
+   * an `IllegalArgumentException`.
+   */
   @Test public void useBeforeAllocateForbidden() throws Exception {
     NameAllocator nameAllocator = new NameAllocator();
     try {
@@ -96,6 +152,10 @@ public final class NameAllocatorTest {
     }
   }
 
+  /**
+   * tests the clone method of a NameAllocator class, which creates a new instance of
+   * the same allocator with the same name prefix and incremented ID.
+   */
   @Test public void cloneUsage() throws Exception {
     NameAllocator outterAllocator = new NameAllocator();
     outterAllocator.newName("foo", 1);

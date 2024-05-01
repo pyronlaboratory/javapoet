@@ -25,58 +25,13 @@ import javax.lang.model.SourceVersion;
 import static com.squareup.javapoet.Util.checkNotNull;
 
 /**
- * Assigns Java identifier names to avoid collisions, keywords, and invalid characters. To use,
- * first create an instance and allocate all of the names that you need. Typically this is a
- * mix of user-supplied names and constants: <pre>   {@code
- *
- *   NameAllocator nameAllocator = new NameAllocator();
- *   for (MyProperty property : properties) {
- *     nameAllocator.newName(property.name(), property);
- *   }
- *   nameAllocator.newName("sb", "string builder");
- * }</pre>
- *
- * Pass a unique tag object to each allocation. The tag scopes the name, and can be used to look up
- * the allocated name later. Typically the tag is the object that is being named. In the above
- * example we use {@code property} for the user-supplied property names, and {@code "string
- * builder"} for our constant string builder.
- *
- * <p>Once we've allocated names we can use them when generating code: <pre>   {@code
- *
- *   MethodSpec.Builder builder = MethodSpec.methodBuilder("toString")
- *       .addAnnotation(Override.class)
- *       .addModifiers(Modifier.PUBLIC)
- *       .returns(String.class);
- *
- *   builder.addStatement("$1T $2N = new $1T()",
- *       StringBuilder.class, nameAllocator.get("string builder"));
- *   for (MyProperty property : properties) {
- *     builder.addStatement("$N.append($N)",
- *         nameAllocator.get("string builder"), nameAllocator.get(property));
- *   }
- *   builder.addStatement("return $N", nameAllocator.get("string builder"));
- *   return builder.build();
- * }</pre>
- *
- * The above code generates unique names if presented with conflicts. Given user-supplied properties
- * with names {@code ab} and {@code sb} this generates the following:  <pre>   {@code
- *
- *   &#64;Override
- *   public String toString() {
- *     StringBuilder sb_ = new StringBuilder();
- *     sb_.append(ab);
- *     sb_.append(sb);
- *     return sb_.toString();
- *   }
- * }</pre>
- *
- * The underscore is appended to {@code sb} to avoid conflicting with the user-supplied {@code sb}
- * property. Underscores are also prefixed for names that start with a digit, and used to replace
- * name-unsafe characters like space or dash.
- *
- * <p>When dealing with multiple independent inner scopes, use a {@link #clone()} of the
- * NameAllocator used for the outer scope to further refine name allocation for a specific inner
- * scope.
+ * is designed to allocate unique names for various identifiers in a program. It
+ * provides a way to generate new names that are not Java identifiers or clash with
+ * other names, and it also allows retrieving a name created with a specific tag. The
+ * class has a `newName()` method that generates a new name based on a given suggestion,
+ * and it also has a `get()` method that retrieves a name created with a specific
+ * tag. Additionally, the class provides a `clone()` method for creating a deep copy
+ * of the NameAllocator.
  */
 public final class NameAllocator implements Cloneable {
   private final Set<String> allocatedNames;
@@ -93,17 +48,36 @@ public final class NameAllocator implements Cloneable {
   }
 
   /**
-   * Return a new name using {@code suggestion} that will not be a Java identifier or clash with
-   * other names.
+   * generates a unique string name based on a given suggestion and a randomly generated
+   * UUID.
+   * 
+   * @param suggestion name to be created, which is then combined with a unique random
+   * UUID string to generate a new name.
+   * 
+   * @returns a unique string consisting of a suggested name and a randomly generated
+   * UUID.
    */
   public String newName(String suggestion) {
     return newName(suggestion, UUID.randomUUID().toString());
   }
 
   /**
-   * Return a new name using {@code suggestion} that will not be a Java identifier or clash with
-   * other names. The returned value can be queried multiple times by passing {@code tag} to
-   * {@link #get(Object)}.
+   * takes a suggested name and an object tag, checks if the input is null, converts
+   * the suggested name to a Java identifier, adds it to a set of allocated names, and
+   * replaces the tag with a unique name if it is already in use.
+   * 
+   * @param suggestion name that will be generated for the object tag.
+   * 
+   * @param tag object that suggests the new name for the variable, and it is used to
+   * determine whether the suggested name is already in use or not.
+   * 
+   * 	- `tag`: The original object that was passed as an argument to `newName`. This
+   * can be any type of object, and its properties or attributes will depend on the
+   * specific class it belongs to.
+   * 	- `Object tag`: The `tag` parameter is of type `Object`, indicating that it can
+   * hold any type of object.
+   * 
+   * @returns a unique identifier for the given tag.
    */
   public String newName(String suggestion, Object tag) {
     checkNotNull(suggestion, "suggestion");
@@ -125,6 +99,15 @@ public final class NameAllocator implements Cloneable {
     return suggestion;
   }
 
+  /**
+   * converts a given string into a Java identifier by replacing non-Java identifier
+   * starting and ending characters with an underscore, and replacing non-Java identifier
+   * parts with a single underscore. The resulting identifier is then returned as a String.
+   * 
+   * @param suggestion string to be converted into a Java identifier.
+   * 
+   * @returns a Java-compliant identifier string.
+   */
   public static String toJavaIdentifier(String suggestion) {
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < suggestion.length(); ) {
@@ -142,7 +125,19 @@ public final class NameAllocator implements Cloneable {
     return result.toString();
   }
 
-  /** Retrieve a name created with {@link #newName(String, Object)}. */
+  /**
+   * maps an object to a string value in a named map called `tagToName`. It returns the
+   * corresponding string if present in the map, otherwise it throws an `IllegalArgumentException`.
+   * 
+   * @param tag object that contains the name of the tag to be retrieved.
+   * 
+   * 	- `result`: This is a String variable that stores the name of the tag.
+   * 	- `tagToName`: This is an instance of a `Map` class that maps tags to their
+   * corresponding names. The map contains entries for each valid tag, where each entry
+   * consists of a tag as the key and its corresponding name as the value.
+   * 
+   * @returns a string representing the name of the tag passed as an argument.
+   */
   public String get(Object tag) {
     String result = tagToName.get(tag);
     if (result == null) {
@@ -152,11 +147,22 @@ public final class NameAllocator implements Cloneable {
   }
 
   /**
-   * Create a deep copy of this NameAllocator. Useful to create multiple independent refinements
-   * of a NameAllocator to be used in the respective definition of multiples, independently-scoped,
-   * inner code blocks.
-   *
-   * @return A deep copy of this NameAllocator.
+   * creates a copy of the `NameAllocator` object, including its internal maps of
+   * allocated names and tag-to-name mappings.
+   * 
+   * @returns a new instance of the `NameAllocator` class with identical allocated names
+   * and tag-to-name mappings as the original instance.
+   * 
+   * 	- The returned instance is an identical copy of the original `NameAllocator`,
+   * with the same allocated names and tag-to-name mapping as the original.
+   * 	- The `LinkedHashSet` used to store the allocated names is a shallow clone, meaning
+   * that it contains references to the same objects as the original set.
+   * 	- The `LinkedHashMap` used to store the tag-to-name mapping is also a shallow
+   * clone, with the same mappings as the original map.
+   * 
+   * Overall, the `clone` function returns a new instance of `NameAllocator` that is
+   * an exact copy of the original, allowing for easy cloning and sharing of instances
+   * without modifying their internal state.
    */
   @Override
   public NameAllocator clone() {

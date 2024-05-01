@@ -19,7 +19,21 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * is a JUnit test class that verifies various character and string literals in Java
+ * using the `Util` class. The test class has several methods that test the behavior
+ * of the `Util` class's `characterLiteralWithoutSingleQuotes`, `stringLiteralWithDoubleQuotes`,
+ * and `stringLiteralWithoutSingleQuotes` methods. These methods are used to encode
+ * various characters and strings with different escapes, such as backslash escapes,
+ * octal escapes, and Unicode escapes. The test class also verifies the behavior of
+ * these methods with different input values, including simple characters, complex
+ * strings, and special characters like "€", "☃", "♠", and "♦".
+ */
 public class UtilTest {
+  /**
+   * tests various character literals in Java, including single quotes, backslash
+   * escapes, octal escapes, and Unicode escapes.
+   */
   @Test public void characterLiteral() {
     assertEquals("a", Util.characterLiteralWithoutSingleQuotes('a'));
     assertEquals("b", Util.characterLiteralWithoutSingleQuotes('b'));
@@ -56,6 +70,10 @@ public class UtilTest {
     assertEquals("／", Util.characterLiteralWithoutSingleQuotes('\uFF0F'));
   }
 
+  /**
+   * tests various combinations of strings, including empty strings, escaped characters,
+   * and new line characters.
+   */
   @Test public void stringLiteral() {
     stringLiteral("abc");
     stringLiteral("♦♥♠♣");
@@ -65,10 +83,27 @@ public class UtilTest {
     stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0", " ");
   }
 
+  /**
+   * takes a string as input and passes it to another function named `stringLiteral`.
+   * 
+   * @param string 2nd and last arguments of the `stringLiteral` method, which are
+   * applied to the concatenation operator.
+   */
   void stringLiteral(String string) {
     stringLiteral(string, string, " ");
   }
 
+  /**
+   * compares a given string value with an expected literal value, using the
+   * `Util.stringLiteralWithDoubleQuotes()` method to perform the comparison.
+   * 
+   * @param expected expected value of the `String` literal being checked by the
+   * `assertEquals` method.
+   * 
+   * @param value string value to be checked against the expected output.
+   * 
+   * @param indent level of indentation for the generated code summary
+   */
   void stringLiteral(String expected, String value, String indent) {
     assertEquals("\"" + expected + "\"", Util.stringLiteralWithDoubleQuotes(value, indent));
   }

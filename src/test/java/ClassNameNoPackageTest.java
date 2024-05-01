@@ -20,10 +20,15 @@ import com.squareup.javapoet.ClassName;
 import org.junit.Test;
 
 /**
- * Since it is impossible to import classes from the default package into other
- * modules, this test must live in this package.
+ * is a test class that verifies the functionality of the ClassName class in Java.
+ * The class has a single method called shouldSupportClassInDefaultPackage() which
+ * tests the package name, simple name, and toString representation of the class.
  */
 public final class ClassNameNoPackageTest {
+  /**
+   * verifies that a class in the default package has the expected properties, including
+   * an empty package name and a simple name matching the class name.
+   */
   @Test public void shouldSupportClassInDefaultPackage() {
     ClassName className = ClassName.get(ClassNameNoPackageTest.class);
     assertThat(className.packageName()).isEqualTo("");
