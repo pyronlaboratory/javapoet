@@ -36,6 +36,15 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
+/**
+ * tests various aspects of the JavaFile class, including:
+ * 
+ * 	- Writing a file to disk and verifying its existence
+ * 	- Including nested classes in the file
+ * 	- Passing originating elements to the file
+ * 	- Handling classes with tab indentation
+ * 	- Verifying that the file is encoded in UTF-8.
+ */
 @RunWith(JUnit4.class)
 public final class FileWritingTest {
   // Used for testing java.io File behavior.
@@ -48,6 +57,10 @@ public final class FileWritingTest {
   // Used for testing annotation processor Filer behavior.
   private final TestFiler filer = new TestFiler(fs, fsRoot);
 
+  /**
+   * tests if an existing file path can be written to as a JavaFile object, failing the
+   * test with an IllegalArgumentException if the path is not a directory.
+   */
   @Test public void pathNotDirectory() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile javaFile = JavaFile.builder("example", type).build();
@@ -62,6 +75,10 @@ public final class FileWritingTest {
     }
   }
 
+  /**
+   * tests whether an existing file can be written to using the `JavaFile.writeTo()`
+   * method, fails if the file exists but is not a directory.
+   */
   @Test public void fileNotDirectory() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile javaFile = JavaFile.builder("example", type).build();
@@ -76,6 +93,10 @@ public final class FileWritingTest {
     }
   }
 
+  /**
+   * verifies that a Java file with the specified name and package exists in the default
+   * package directory.
+   */
   @Test public void pathDefaultPackage() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile.builder("", type).build().writeTo(fsRoot);
@@ -84,6 +105,10 @@ public final class FileWritingTest {
     assertThat(Files.exists(testPath)).isTrue();
   }
 
+  /**
+   * writes a Java file to a temporary directory, creating a new class with the specified
+   * name and package.
+   */
   @Test public void fileDefaultPackage() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile.builder("", type).build().writeTo(tmp.getRoot());
@@ -92,6 +117,11 @@ public final class FileWritingTest {
     assertThat(testFile.exists()).isTrue();
   }
 
+  /**
+   * writes a Java class file to a file located at a specific path using the
+   * `JavaFile.builder()` method, and then verifies that the file exists using the
+   * `Files.exists()` method.
+   */
   @Test public void filerDefaultPackage() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile.builder("", type).build().writeTo(filer);
@@ -100,6 +130,10 @@ public final class FileWritingTest {
     assertThat(Files.exists(testPath)).isTrue();
   }
 
+  /**
+   * validates the existence of three Java classes: "foo", "foo.bar", and "foo.bar.baz"
+   * within a root directory specified by `fsRoot`.
+   */
   @Test public void pathNestedClasses() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile.builder("foo", type).build().writeTo(fsRoot);
@@ -114,6 +148,10 @@ public final class FileWritingTest {
     assertThat(Files.exists(bazPath)).isTrue();
   }
 
+  /**
+   * creates three nested Java classes: `Test`, `bar.Test`, and `bar.baz.Test`. It then
+   * checks if the corresponding files exist in a temporary directory.
+   */
   @Test public void fileNestedClasses() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile.builder("foo", type).build().writeTo(tmp.getRoot());
@@ -131,6 +169,9 @@ public final class FileWritingTest {
     assertThat(bazFile.exists()).isTrue();
   }
 
+  /**
+   * writes three Java files to a file system, and then checks that each file exists.
+   */
   @Test public void filerNestedClasses() throws IOException {
     TypeSpec type = TypeSpec.classBuilder("Test").build();
     JavaFile.builder("foo", type).build().writeTo(filer);
@@ -145,6 +186,12 @@ public final class FileWritingTest {
     assertThat(Files.exists(bazPath)).isTrue();
   }
 
+  /**
+   * tests whether a filer preserves the originating elements of the classes it serializes.
+   * It creates two test classes with different originating elements and writes their
+   * bytecode to a filer, then checks if the filer correctly preserved the originating
+   * elements when reading them back.
+   */
   @Test public void filerPassesOriginatingElements() throws IOException {
     Element element1_1 = Mockito.mock(Element.class);
     TypeSpec test1 = TypeSpec.classBuilder("Test1")
@@ -167,6 +214,10 @@ public final class FileWritingTest {
     assertThat(filer.getOriginatingElements(testPath2)).containsExactly(element2_1, element2_2);
   }
 
+  /**
+   * generates a Java file with a single class named `Test`. The class has a field and
+   * a main method that prints "Hello World!" to the console.
+   */
   @Test public void filerClassesWithTabIndent() throws IOException {
     TypeSpec test = TypeSpec.classBuilder("Test")
         .addField(Date.class, "madeFreshDate")
@@ -199,8 +250,8 @@ public final class FileWritingTest {
   }
 
   /**
-   * This test confirms that JavaPoet ignores the host charset and always uses UTF-8. The host
-   * charset is customized with {@code -Dfile.encoding=ISO-8859-1}.
+   * verifies that a Java file contains the correct character encoding ("UTF-8") and
+   * contents ("// Pi\u00f1ata\u00a1").
    */
   @Test public void fileIsUtf8() throws IOException {
     JavaFile javaFile = JavaFile.builder("foo", TypeSpec.classBuilder("Taco").build())
@@ -217,6 +268,9 @@ public final class FileWritingTest {
         + "}\n");
   }
 
+  /**
+   * converts a Java file into a Path object, representing the file's location on disk.
+   */
   @Test public void writeToPathReturnsPath() throws IOException {
     JavaFile javaFile = JavaFile.builder("foo", TypeSpec.classBuilder("Taco").build()).build();
     Path filePath = javaFile.writeToPath(fsRoot);

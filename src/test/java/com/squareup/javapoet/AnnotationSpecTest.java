@@ -29,6 +29,15 @@ import org.junit.Test;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.fail;
 
+/**
+ * has several methods that test various aspects of the AnnotationSpec class. These
+ * tests include verifying that the correct members are added to an AnnotationSpec
+ * instance, disallowing null member names, requiring valid member names, and modifying
+ * members. The tests also demonstrate how to use the AnnotationSpec.builder() method
+ * to build an AnnotationSpec instance with customized members. Overall, these tests
+ * demonstrate the functionality and flexibility of the AnnotationSpec class in
+ * generating Java code with annotations.
+ */
 public final class AnnotationSpecTest {
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -47,6 +56,13 @@ public final class AnnotationSpecTest {
 
   public enum Breakfast {
     WAFFLES, PANCAKES;
+    /**
+     * simply returns a string representation of its input, which is a `name` value
+     * preceded by the string "with cherries!".
+     * 
+     * @returns a string representation of the object, including the object's name and
+     * the addition of "with cherries!"
+     */
     public String toString() { return name() + " with cherries!"; };
   }
 
@@ -91,6 +107,10 @@ public final class AnnotationSpecTest {
 
   }
 
+  /**
+   * serves as an annotation to mark a class with various default values for its fields
+   * and methods, including Breakfast.PANCAKES, 1701, 11.1, etc.
+   */
   @HasDefaultsAnnotation(
       o = Breakfast.PANCAKES,
       p = 1701,
@@ -106,6 +126,10 @@ public final class AnnotationSpecTest {
 
   @Rule public final CompilationRule compilation = new CompilationRule();
 
+  /**
+   * tests whether two `AnnotationSpec` objects are equal and have the same hash code
+   * based on their member values.
+   */
   @Test public void equalsAndHashCode() {
     AnnotationSpec a = AnnotationSpec.builder(AnnotationC.class).build();
     AnnotationSpec b = AnnotationSpec.builder(AnnotationC.class).build();
@@ -117,6 +141,11 @@ public final class AnnotationSpecTest {
     assertThat(a.hashCode()).isEqualTo(b.hashCode());
   }
 
+  /**
+   * generates a Java class with a custom annotation using the `AnnotationSpec` class.
+   * The generated code includes various fields and methods with default values, as
+   * well as a main method to demonstrate the usage of the annotated class.
+   */
   @Test public void defaultAnnotation() {
     String name = IsAnnotated.class.getCanonicalName();
     TypeElement element = compilation.getElements().getTypeElement(name);
@@ -154,6 +183,10 @@ public final class AnnotationSpecTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java class with an annotation using the `JavaFile` class, and verifies
+   * that the generated code matches the expected output.
+   */
   @Test public void defaultAnnotationWithImport() {
     String name = IsAnnotated.class.getCanonicalName();
     TypeElement element = compilation.getElements().getTypeElement(name);
@@ -190,6 +223,10 @@ public final class AnnotationSpecTest {
     );
   }
 
+  /**
+   * tests whether the `AnnotationSpec.Builder` generates expected output for empty
+   * array fields.
+   */
   @Test public void emptyArray() {
     AnnotationSpec.Builder builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
     builder.addMember("n", "$L", "{}");
@@ -203,6 +240,10 @@ public final class AnnotationSpecTest {
                 + ")");
   }
 
+  /**
+   * tests the ability to add, remove and modify elements in an array of enum constants
+   * using the `AnnotationSpec.builder` class.
+   */
   @Test public void dynamicArrayOfEnumConstants() {
     AnnotationSpec.Builder builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
     builder.addMember("n", "$T.$L", Breakfast.class, Breakfast.PANCAKES.name());
@@ -242,6 +283,11 @@ public final class AnnotationSpecTest {
             + "})");
   }
 
+  /**
+   * generates an AnnotationSpec.Builder instance based on a given type element and
+   * adds default values to it. The builder is then used to build an AnnotationSpec
+   * instance with the added defaults.
+   */
   @Test public void defaultAnnotationToBuilder() {
     String name = IsAnnotated.class.getCanonicalName();
     TypeElement element = compilation.getElements().getTypeElement(name);
@@ -261,6 +307,11 @@ public final class AnnotationSpecTest {
             + ")");
   }
 
+  /**
+   * tests whether a class has defaults annotation. It does this by creating a TypeSpec
+   * of the class, adding the annotation to it, and then comparing the resulting toString
+   * output with a expected value.
+   */
   @Test public void reflectAnnotation() {
     HasDefaultsAnnotation annotation = IsAnnotated.class.getAnnotation(HasDefaultsAnnotation.class);
     AnnotationSpec spec = AnnotationSpec.get(annotation);
@@ -295,6 +346,11 @@ public final class AnnotationSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests the behavior of the `HasDefaultsAnnotation` annotation on a class, by
+   * generating a default implementation of the annotation and verifying that it is
+   * reflected correctly in the generated code.
+   */
   @Test public void reflectAnnotationWithDefaults() {
     HasDefaultsAnnotation annotation = IsAnnotated.class.getAnnotation(HasDefaultsAnnotation.class);
     AnnotationSpec spec = AnnotationSpec.get(annotation, true);
@@ -353,6 +409,10 @@ public final class AnnotationSpecTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a `AnnotationSpec.Builder` throws a ` NullPointerException` when
+   * attempting to add a member with a null `name`.
+   */
   @Test public void disallowsNullMemberName() {
     AnnotationSpec.Builder builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
     try {
@@ -363,6 +423,10 @@ public final class AnnotationSpecTest {
     }
   }
 
+  /**
+   * tests whether an annotation builder throws an `IllegalArgumentException` when a
+   * invalid member name is provided.
+   */
   @Test public void requiresValidMemberName() {
     AnnotationSpec.Builder builder = AnnotationSpec.builder(HasDefaultsAnnotation.class);
     try {
@@ -373,6 +437,11 @@ public final class AnnotationSpecTest {
     }
   }
 
+  /**
+   * modifies the members of an `AnnotationSpec.Builder` instance, clearing and adding
+   * new values to the `members` map. The function then builds the `AnnotationSpec`
+   * object and checks if its toString representation is equal to the expected output.
+   */
   @Test public void modifyMembers() {
     AnnotationSpec.Builder builder = AnnotationSpec.builder(SuppressWarnings.class)
             .addMember("value", "$S", "Foo");
@@ -383,6 +452,19 @@ public final class AnnotationSpecTest {
     assertThat(builder.build().toString()).isEqualTo("@java.lang.SuppressWarnings(\"Bar\")");
   }
 
+  /**
+   * generates a string representation of a `TypeSpec` object, using a `JavaFile.builder`
+   * method to construct the string and then returning it.
+   * 
+   * @param typeSpec TypeSpec object that contains information about a Java class or
+   * interface, which is used to generate the corresponding Java file's source code.
+   * 
+   * 	- The TypeSpec type is specified as "com.squareup.tacos".
+   * 	- The builder class for constructing the Java file is specified as "JavaFile.builder".
+   * 	- The build method returns the generated Java file as a string.
+   * 
+   * @returns a string representation of the given TypeSpec object.
+   */
   private String toString(TypeSpec typeSpec) {
     return JavaFile.builder("com.squareup.tacos", typeSpec).build().toString();
   }

@@ -34,15 +34,55 @@ import org.junit.runners.JUnit4;
 
 import static com.google.common.truth.Truth.assertThat;
 
+/**
+ * is used to test the generation of Java files by the Poet library. It contains a
+ * number of methods that generate code for various scenarios, including interfaces,
+ * classes, and inheritance. The tests cover different cases such as avoiding clashes
+ * between parent and child classes, superclasses and interfaces, and map entries.
+ * The generated code is checked to ensure that it does not contain any errors or inconsistencies.
+ */
 @RunWith(JUnit4.class)
 public final class JavaFileTest {
 
   @Rule public final CompilationRule compilation = new CompilationRule();
 
+  /**
+   * retrieves a `TypeElement` object representing a class or interface from the
+   * compilation's elements set based on the given class name.
+   * 
+   * @param clazz Class<?> object that the function is called with, and it is used to
+   * locate the corresponding TypeElement in the compilation's Elements collection.
+   * 
+   * 	- `compilation`: This is a reference to an object representing the compilation
+   * of types in the Java programming language.
+   * 	- `Elements`: This refers to a collection of type elements, which are the fundamental
+   * units of typing in the Java programming language.
+   * 	- `getTypeElement`: This method returns a specific type element within the
+   * `Elements` collection based on the canonical name of the class represented by `clazz`.
+   * 
+   * @returns a `TypeElement` object representing the type of the given class.
+   * 
+   * The TypeElement object represents a type in the Java programming language, which
+   * is returned by the function call. The type may be an interface, class, or other
+   * type-related construct. The TypeElement object contains information about the
+   * type's name, kind, and other attributes, such as its enclosing scope and any
+   * annotations it may have.
+   * 
+   * The function returns a TypeElement object after obtaining it from the compilation's
+   * Elements collection, which contains all types declared in the code being compiled.
+   * The method uses the canonical name of the class to retrieve the appropriate
+   * TypeElement object from the Elements collection.
+   */
   private TypeElement getElement(Class<?> clazz) {
     return compilation.getElements().getTypeElement(clazz.getCanonicalName());
   }
 
+  /**
+   * creates a new list of Hoverboards and adds three elements to it using the
+   * `createNimbus` method from the `Hoverboard` class, followed by sorting the list
+   * using the `sort` method from the `Collections` class. It then returns the list of
+   * Hoverboards.
+   */
   @Test public void importStaticReadmeExample() {
     ClassName hoverboard = ClassName.get("com.mattel", "Hoverboard");
     ClassName namedBoards = ClassName.get("com.mattel", "Hoverboard", "Boards");
@@ -88,6 +128,10 @@ public final class JavaFileTest {
         + "  }\n"
         + "}\n");
   }
+  /**
+   * imports static blocks for various crazy formats, including nested classes, inner
+   * classes, and anonymous classes.
+   */
   @Test public void importStaticForCrazyFormatsWorks() {
     MethodSpec method = MethodSpec.methodBuilder("method").build();
     JavaFile.builder("com.squareup.tacos",
@@ -112,6 +156,11 @@ public final class JavaFileTest {
         .toString(); // don't look at the generated code...
   }
 
+  /**
+   * imports static blocks and methods from the `java.lang` package, including `System`,
+   * `Thread`, and `ValueOf`. It also defines a constructor and static methods for a
+   * class called `Taco`.
+   */
   @Test public void importStaticMixed() {
     JavaFile source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -150,6 +199,11 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java source code that imports a static member from another class using
+   * the `static` import statement, while also including the member's name in the import
+   * statement.
+   */
   @Ignore("addStaticImport doesn't support members with $L")
   @Test public void importStaticDynamic() {
     JavaFile source = JavaFile.builder("com.squareup.tacos",
@@ -172,6 +226,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * verifies that a Java file containing an `import static` statement with no arguments
+   * results in an empty string for its toString() method output.
+   */
   @Test public void importStaticNone() {
     assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
         .build().toString()).isEqualTo(""
@@ -188,6 +246,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether importing static typespecs once results in the expected output.
+   */
   @Test public void importStaticOnce() {
     assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.SECONDS)
@@ -207,6 +268,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the import statement is redundant when used twice for different types.
+   */
   @Test public void importStaticTwice() {
     assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.SECONDS)
@@ -227,6 +291,10 @@ public final class JavaFileTest {
             + "}\n");
   }
 
+  /**
+   * imports static classes and fields from the `java.lang`, `java.util.concurrent`,
+   * and `java.util` packages using wildcards.
+   */
   @Test public void importStaticUsingWildcards() {
     assertThat(JavaFile.builder("readme", importStaticTypeSpec("Util"))
         .addStaticImport(TimeUnit.class, "*")
@@ -245,6 +313,14 @@ public final class JavaFileTest {
             + "}\n");
   }
 
+  /**
+   * creates a new instance of the `TypeSpec` class, and returns it after building a
+   * `MethodSpec` object that defines a static method called `minutesToSeconds`.
+   * 
+   * @param name name of the generated type spec.
+   * 
+   * @returns a `TypeSpec` object representing a static method named `minutesToSeconds`.
+   */
   private TypeSpec importStaticTypeSpec(String name) {
     MethodSpec method = MethodSpec.methodBuilder("minutesToSeconds")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -256,6 +332,10 @@ public final class JavaFileTest {
     return TypeSpec.classBuilder(name).addMethod(method).build();
 
   }
+  /**
+   * tests whether a Java file contains any imports by comparing its source code to an
+   * empty string.
+   */
   @Test public void noImports() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco").build())
@@ -268,6 +348,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * verifies that a single import statement is present in a Java file, with the expected
+   * import being for the `java.util.Date` class.
+   */
   @Test public void singleImport() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -285,6 +369,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether importing the same class name multiple times in a Java file leads
+   * to an error.
+   */
   @Test public void conflictingImports() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -305,6 +393,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java file with a class `Taco` that has a field `chorizo` of type `List`,
+   * where each element is an instance of `Chorizo` annotated with `@Spicy`.
+   */
   @Test public void annotatedTypeParam() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -326,6 +418,11 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java source code with the specified class and fields, while skipping
+   * the import statements for the `java.lang` package if there is a conflicting field
+   * with a fully qualified name in the same package.
+   */
   @Test public void skipJavaLangImportsWithConflictingClassLast() throws Exception {
     // Whatever is used first wins! In this case the Float in java.lang is imported.
     String source = JavaFile.builder("com.squareup.tacos",
@@ -346,6 +443,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * imports a class from a package with the same name as a conflicting class from the
+   * standard library, importing the first conflicting class fully qualified.
+   */
   @Test public void skipJavaLangImportsWithConflictingClassFirst() throws Exception {
     // Whatever is used first wins! In this case the Float in com.squareup.soda is imported.
     String source = JavaFile.builder("com.squareup.tacos",
@@ -368,6 +469,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a class with conflicting parent names can be compiled successfully.
+   */
   @Test public void conflictingParentName() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("A")
@@ -404,6 +508,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a class can have two child classes with the same name, but different
+   * types.
+   */
   @Test public void conflictingChildName() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("A")
@@ -440,6 +548,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a class with conflicting names can be properly compiled, ensuring
+   * that the output is as expected.
+   */
   @Test public void conflictingNameOutOfScope() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("A")
@@ -480,6 +592,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a nested class and its superclass share the same name.
+   */
   @Test public void nestedClassAndSuperclassShareName() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -501,6 +616,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a class and its superclass share the same name.
+   */
   @Test public void classAndSuperclassShareName() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -515,6 +633,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a class with conflicting annotations can be generated by Java compiler.
+   */
   @Test public void conflictingAnnotation() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -530,6 +651,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether an annotation reference to a class conflicts with the referenced
+   * class's package name.
+   */
   @Test public void conflictingAnnotationReferencedClass() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -547,6 +672,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a type variable bound can conflict with a nested type variable bound
+   * in the same class.
+   */
   @Test public void conflictingTypeVariableBound() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -562,6 +691,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a subclass references its direct superclass in its generic type declaration.
+   */
   @Test public void superclassReferencesSelf() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -579,7 +711,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
-  /** https://github.com/square/javapoet/issues/366 */
+  /**
+   * verifies that an annotation is contained within a nested class, by comparing the
+   * expected source code to the actual source code generated by Dagger.
+   */
   @Test public void annotationIsNestedClass() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("TestComponent")
@@ -603,6 +738,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a Java file contains the source code for a `HelloWorld` class with
+   * a single `main` method that prints "Hello World!" to the console.
+   */
   @Test public void defaultPackage() throws Exception {
     String source = JavaFile.builder("",
         TypeSpec.classBuilder("HelloWorld")
@@ -625,6 +764,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests that default packages are not imported when generating Java code.
+   */
   @Test public void defaultPackageTypesAreNotImported() throws Exception {
     String source = JavaFile.builder("hello",
           TypeSpec.classBuilder("World").addSuperinterface(ClassName.get("", "Test")).build())
@@ -637,6 +779,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a file comment at the top of a Java class file based on a given date and
+   * company name, using the `JavaFile` builder class to create the file contents.
+   */
   @Test public void topOfFileComment() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco").build())
@@ -651,6 +797,11 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * verifies that a generated Java file contains only empty lines at the top, with the
+   * first line being a comment indicating that the file is generated and should not
+   * be edited.
+   */
   @Test public void emptyLinesInTopOfFileComment() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco").build())
@@ -669,6 +820,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a nested class conflicts with an outer class with the same package
+   * name.
+   */
   @Test public void packageClassConflictsWithNestedClass() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -688,6 +843,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a class with the same name as its superclass but different package
+   * name conflicts with its superclass.
+   */
   @Test public void packageClassConflictsWithSuperlass() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -704,6 +863,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * updates a Java file to add a static import for the `separatorChar` field of the
+   * `File` class, while clearing and adding other static imports.
+   */
   @Test public void modifyStaticImports() throws Exception {
     JavaFile.Builder builder = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -724,6 +887,9 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether the `alwaysQualify` flag is properly applied to a `TypeSpec`.
+   */
   @Test public void alwaysQualifySimple() {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -740,6 +906,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * modifies a Java file to include fields with fully qualified class names, even when
+   * using imports from the `java.lang` package.
+   */
   @Test public void alwaysQualifySupersedesJavaLangImports() {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -757,6 +927,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java file that contains a class with fields that are qualified with
+   * their respective nested classes, while avoiding conflicts with already defined classes.
+   */
   @Test public void avoidClashesWithNestedClasses_viaClass() {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -788,6 +962,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java class with fields that avoid clashing with nested classes, using
+   * the `TypeElement` to specify the nested types.
+   */
   @Test public void avoidClashesWithNestedClasses_viaTypeElement() {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -819,6 +997,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * tests whether a class can use a superinterface type to avoid conflicts with nested
+   * classes.
+   */
   @Test public void avoidClashesWithNestedClasses_viaSuperinterfaceType() {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
@@ -858,24 +1040,64 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * has a static nested class hierarchy with two subclasses: NestedTypeA and NestedTypeB.
+   */
   static class Foo {
+    /**
+     * is a nested inner class within the Parent Class.
+     */
     static class NestedTypeA {
 
     }
+    /**
+     * is a nested inner class within a larger outer class, with no fields or methods of
+     * its own.
+     */
     static class NestedTypeB {
 
     }
   }
 
+  /**
+   * has two nested classes: NestedTypeA and NestedTypeB.
+   */
   interface FooInterface {
+    /**
+     * represents a nested type in a parent class.
+     */
     class NestedTypeA {
 
     }
+    /**
+     * represents a nested type B within a larger JavaPoet file.
+     */
     class NestedTypeB {
 
     }
   }
 
+  /**
+   * generates a `TypeSpec.Builder` instance that defines two methods: `optionalString()`
+   * and `pattern()`. The `optionalString()` method returns an `Optional<String>` object,
+   * while the `pattern()` method returns a null reference.
+   * 
+   * @returns a `TypeSpec` object representing a class with two methods: `optionalString()`
+   * and `pattern()`.
+   * 
+   * 1/ The `TypeSpec.Builder` object is created with the class name "Child".
+   * 2/ Two methods are defined: "optionalString" and "pattern".
+   * 3/ The "optionalString" method returns a type named "Optional<String>", which is
+   * a subtype of the "String" type.
+   * 4/ The "pattern" method returns a null value.
+   * 
+   * The properties of these methods and their return types are as follows:
+   * 
+   * 	- "optionalString": This method returns an optional string, which means it can
+   * be either a string or null.
+   * 	- "pattern": This method returns a null value, indicating that the class does not
+   * have any pattern information.
+   */
   private TypeSpec.Builder childTypeBuilder() {
     return TypeSpec.classBuilder("Child")
         .addMethod(MethodSpec.methodBuilder("optionalString")
@@ -888,6 +1110,11 @@ public final class JavaFileTest {
             .build());
   }
 
+  /**
+   * generates Java code that defines a child class with a superclass of `Parent`, and
+   * ensures that no conflicts occur between the classes by providing empty implementations
+   * for `optionalString()` and `pattern()`.
+   */
   @Test
   public void avoidClashes_parentChild_superclass_type() {
     String source = JavaFile.builder("com.squareup.javapoet",
@@ -909,6 +1136,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java file that contains a child class with a superclass and type mirror,
+   * and checks that the generated code does not have any clashes or conflicts.
+   */
   @Test
   public void avoidClashes_parentChild_superclass_typeMirror() {
     String source = JavaFile.builder("com.squareup.javapoet",
@@ -930,6 +1161,11 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates a Java class that implements a super interface and has a method that
+   * returns an empty optional and another method that returns null, without any clashes
+   * with the super interface.
+   */
   @Test
   public void avoidClashes_parentChild_superinterface_type() {
     String source = JavaFile.builder("com.squareup.javapoet",
@@ -952,6 +1188,10 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  /**
+   * generates Java code that implements a parent interface and a child class with the
+   * same name, without any clashes or conflicts between them.
+   */
   @Test
   public void avoidClashes_parentChild_superinterface_typeMirror() {
     String source = JavaFile.builder("com.squareup.javapoet",
@@ -976,19 +1216,37 @@ public final class JavaFileTest {
 
   // Regression test for https://github.com/square/javapoet/issues/77
   // This covers class and inheritance
+  /**
+   * implements an interface called ParentInterface and has a static inner class called
+   * Pattern.
+   */
   static class Parent implements ParentInterface {
+    /**
+     * is a static inner class in the Parent class with no fields or methods declared.
+     */
     static class Pattern {
 
     }
   }
 
+  /**
+   * defines an interface for a class to implement methods related to parents and parenting.
+   */
   interface ParentInterface {
+    /**
+     * is a class in Java that provides an optional value, which can be used to represent
+     * the absence of a value or the presence of a value that may be null.
+     */
     class Optional {
 
     }
   }
 
   // Regression test for case raised here: https://github.com/square/javapoet/issues/77#issuecomment-519972404
+  /**
+   * generates a Java class that implements the `Map` interface and has a method
+   * `optionalString()` that returns a `com.foo.Entry` object, but always returns `null`.
+   */
   @Test
   public void avoidClashes_mapEntry() {
     String source = JavaFile.builder("com.squareup.javapoet",

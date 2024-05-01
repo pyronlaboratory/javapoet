@@ -22,7 +22,18 @@ import static org.junit.Assert.fail;
 
 import javax.lang.model.element.Modifier;
 
+/**
+ * is a Java file that contains several tests for the FieldSpec class. The tests cover
+ * various aspects of the FieldSpec class, including equality and hash code, null
+ * annotations addition, annotation removals, and modifier removals. The tests are
+ * written in a formal and neutral tone, without any first-person statements or
+ * personal pronouns.
+ */
 public class FieldSpecTest {
+  /**
+   * tests whether two FieldSpecs are equal and hashable based on their class, name,
+   * modifiers, and other attributes.
+   */
   @Test public void equalsAndHashCode() {
     FieldSpec a = FieldSpec.builder(int.class, "foo").build();
     FieldSpec b = FieldSpec.builder(int.class, "foo").build();
@@ -36,6 +47,10 @@ public class FieldSpecTest {
     assertThat(a.toString()).isEqualTo(b.toString());
   }
 
+  /**
+   * tests whether an exception is thrown when attempting to add annotations to a field
+   * spec with null annotations.
+   */
   @Test public void nullAnnotationsAddition() {
     try {
       FieldSpec.builder(int.class, "foo").addAnnotations(null);
@@ -47,6 +62,10 @@ public class FieldSpecTest {
     }
   }
 
+  /**
+   * modifies an instance of `FieldSpec.Builder`, removing an annotation from a list
+   * of annotations added to the field.
+   */
   @Test public void modifyAnnotations() {
     FieldSpec.Builder builder = FieldSpec.builder(int.class, "foo")
           .addAnnotation(Override.class)
@@ -56,6 +75,10 @@ public class FieldSpecTest {
     assertThat(builder.build().annotations).hasSize(1);
   }
 
+  /**
+   * modifies the modifiers of a `FieldSpec`. Specifically, it removes the second
+   * modifier from the list of modifiers for the `FieldSpec`.
+   */
   @Test public void modifyModifiers() {
     FieldSpec.Builder builder = FieldSpec.builder(int.class, "foo")
           .addModifiers(Modifier.PUBLIC, Modifier.STATIC);
