@@ -1,0 +1,1074 @@
+[
+  {
+    "name": "AnnotationSpec.java",
+    "path": "src/main/java/com/squareup/javapoet/AnnotationSpec.java",
+    "content": {
+      "structured": {
+        "description": "",
+        "items": [
+          {
+            "id": "e8e57c99-e97c-4547-b14c-c394f498b534",
+            "ancestors": [],
+            "type": "function",
+            "name": "emit",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 52,
+              "start": 52
+            },
+            "returns": false,
+            "params": [
+              {
+                "name": "codeWriter",
+                "type": "CodeWriter"
+              },
+              {
+                "name": "inline",
+                "type": "boolean"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 33,
+            "comment": {
+              "description": "Generates high-quality documentation for given code, using a template and passing it to a `CodeWriter`. It handles different types of annotations (singleton, named, and inline) and formats them according to the template.",
+              "params": [
+                {
+                  "name": "codeWriter",
+                  "type": "CodeWriter",
+                  "description": "3rd party library that generates the documentation for the given code."
+                },
+                {
+                  "name": "inline",
+                  "type": "boolean",
+                  "description": "boolean value indicating whether the annotation values should be written directly inside the method signature or indented below it, respectively."
+                }
+              ],
+              "returns": null
+            }
+          },
+          {
+            "id": "edc1fd2b-9700-4706-88a0-c187e13aeeb9",
+            "ancestors": [],
+            "type": "function",
+            "name": "emitAnnotationValues",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 86,
+              "start": 86
+            },
+            "returns": false,
+            "params": [
+              {
+                "name": "codeWriter",
+                "type": "CodeWriter"
+              },
+              {
+                "name": "whitespace",
+                "type": "String"
+              },
+              {
+                "name": "memberSeparator",
+                "type": "String"
+              },
+              {
+                "name": "values",
+                "type": "List<CodeBlock>"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 20,
+            "comment": {
+              "description": "Emits annotation values in a code writer, indented according to the size of the list and separated by a member separator if there are multiple values.",
+              "params": [
+                {
+                  "name": "codeWriter",
+                  "type": "CodeWriter",
+                  "description": "output stream where the annotated code should be written."
+                },
+                {
+                  "name": "whitespace",
+                  "type": "String",
+                  "description": "indentation level for the emission of code blocks, which is used to group related code blocks together and improve readability."
+                },
+                {
+                  "name": "memberSeparator",
+                  "type": "String",
+                  "description": "string that separates each member in the list of values when they are emitted to the code writer."
+                },
+                {
+                  "name": "values",
+                  "type": "List<CodeBlock>",
+                  "description": "List of CodeBlock objects that emitting annotation values for"
+                }
+              ],
+              "returns": null
+            }
+          },
+          {
+            "id": "80511389-a8c5-417f-801e-65567f795786",
+            "ancestors": [],
+            "type": "function",
+            "name": "get",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 107,
+              "start": 107
+            },
+            "returns": "AnnotationSpec",
+            "params": [
+              {
+                "name": "annotation",
+                "type": "Annotation"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Returns an `AnnotationSpec` object representing the given `Annotation`.",
+              "params": [
+                {
+                  "name": "annotation",
+                  "type": "Annotation",
+                  "description": "Annotation object to be retrieved as an AnnotationSpec object by the `get()` method."
+                }
+              ],
+              "returns": {
+                "type": "AnnotationSpec",
+                "description": "an `AnnotationSpec` object."
+              }
+            }
+          },
+          {
+            "id": "36c71074-e590-491a-aae9-b48e5596df17",
+            "ancestors": [],
+            "type": "function",
+            "name": "get",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 111,
+              "start": 111
+            },
+            "returns": "AnnotationSpec",
+            "params": [
+              {
+                "name": "annotation",
+                "type": "Annotation"
+              },
+              {
+                "name": "includeDefaultValues",
+                "type": "boolean"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 34,
+            "comment": {
+              "description": "Retrieves the values of an Annotation using reflection and builds a `AnnotationSpec` object based on the retrieved values.",
+              "params": [
+                {
+                  "name": "annotation",
+                  "type": "Annotation",
+                  "description": "annotation object to be reflected upon, providing the method names and values to include or exclude when building the `AnnotationSpec`."
+                },
+                {
+                  "name": "includeDefaultValues",
+                  "type": "boolean",
+                  "description": "default values for each method and if they match the value returned from the `Method.invoke()` method, then skip adding them to the builder."
+                }
+              ],
+              "returns": {
+                "type": "AnnotationSpec",
+                "description": "an `AnnotationSpec` object representing the annotations of the given annotation instance."
+              }
+            }
+          },
+          {
+            "id": "219136fc-9e58-4ca6-8edc-f66c5b1ae86b",
+            "ancestors": [
+              "36c71074-e590-491a-aae9-b48e5596df17"
+            ],
+            "type": "function",
+            "name": "compare",
+            "location": {
+              "offset": " ",
+              "indent": 8,
+              "insert": 116,
+              "start": 116
+            },
+            "returns": "int",
+            "params": [
+              {
+                "name": "m1",
+                "type": "Method"
+              },
+              {
+                "name": "m2",
+                "type": "Method"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 4,
+            "comment": {
+              "description": "Compares two `Method` objects based on their names, returning a negative integer value if the first method name is shorter than the second, a positive integer value if the first method name is longer than the second, and zero if the method names are equal.",
+              "params": [
+                {
+                  "name": "m1",
+                  "type": "Method",
+                  "description": "1st method being compared to the 2nd method in the compare() function."
+                },
+                {
+                  "name": "m2",
+                  "type": "Method",
+                  "description": "2nd method being compared to the 1st method `m1`."
+                }
+              ],
+              "returns": {
+                "type": "int",
+                "description": "a numerical value indicating the comparison result between two method names."
+              }
+            }
+          },
+          {
+            "id": "3b3ab8e2-1e9c-447f-8597-60134856ec2b",
+            "ancestors": [],
+            "type": "function",
+            "name": "get",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 146,
+              "start": 146
+            },
+            "returns": "AnnotationSpec",
+            "params": [
+              {
+                "name": "annotation",
+                "type": "AnnotationMirror"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 11,
+            "comment": {
+              "description": "Generates a documentation-quality annotation object for the given annotation instance, using the element values of the annotation to construct the object's fields and methods.",
+              "params": [
+                {
+                  "name": "annotation",
+                  "type": "AnnotationMirror",
+                  "description": "annotation for which the method generates documentation."
+                }
+              ],
+              "returns": {
+                "type": "AnnotationSpec",
+                "description": "an `AnnotationSpec` object representing the specified annotation."
+              }
+            }
+          },
+          {
+            "id": "59c5013e-b909-4db3-b35c-0a104ae82d1f",
+            "ancestors": [],
+            "type": "function",
+            "name": "builder",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 158,
+              "start": 158
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "type",
+                "type": "ClassName"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 4,
+            "comment": {
+              "description": "Creates a new `Builder` instance for a given type.",
+              "params": [
+                {
+                  "name": "type",
+                  "type": "ClassName",
+                  "description": "ClassName to be built using the `Builder` class."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a `Builder` object of the specified type."
+              }
+            }
+          },
+          {
+            "id": "ef1ed356-b01f-4703-b2a6-533b186ba9ca",
+            "ancestors": [],
+            "type": "function",
+            "name": "builder",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 163,
+              "start": 163
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "type",
+                "type": "Class<?>"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Creates a new instance of a custom class, specified by the `type` parameter, using the `Builder` interface.",
+              "params": [
+                {
+                  "name": "type",
+                  "type": "Class<?>",
+                  "description": "class to which the builder will be created, and it is used to generate a builder object of that class."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a `Builder` instance of the specified class type."
+              }
+            }
+          },
+          {
+            "id": "74806e43-a242-48fb-956e-4bc113873ddf",
+            "ancestors": [],
+            "type": "function",
+            "name": "equals",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 175,
+              "start": 175
+            },
+            "returns": "boolean",
+            "params": [
+              {
+                "name": "o",
+                "type": "Object"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 6,
+            "comment": {
+              "description": "Compares the object being checked to the current object, checks if they are the same object, and then checks if their classes are the same. If those conditions are met, it returns true. Otherwise, it returns false.",
+              "params": [
+                {
+                  "name": "o",
+                  "type": "Object",
+                  "description": "object being checked for equality with the current object."
+                }
+              ],
+              "returns": {
+                "type": "boolean",
+                "description": "a boolean value indicating whether the object is equal to the current instance."
+              }
+            }
+          },
+          {
+            "id": "9b7a1ecd-8660-46d9-a551-7cad45081834",
+            "ancestors": [],
+            "type": "function",
+            "name": "addMember",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 205,
+              "start": 205
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "name",
+                "type": "String"
+              },
+              {
+                "name": "format",
+                "type": "String"
+              },
+              {
+                "name": "args",
+                "type": "Object"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Adds a member to a Builder object with a specified name and format for the member value, using a CodeBlock object to hold the format and arguments.",
+              "params": [
+                {
+                  "name": "name",
+                  "type": "String",
+                  "description": "name of the member to be added."
+                },
+                {
+                  "name": "format",
+                  "type": "String",
+                  "description": "format string to be used for adding the member to the builder's internal state."
+                },
+                {
+                  "name": "args",
+                  "type": "Object",
+                  "description": "0 or more arguments to be passed to the format string specified by the `name` parameter when calling the `CodeBlock.builder().add(format, args).build()` method."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a `CodeBlock` object containing the specified code and arguments."
+              }
+            }
+          },
+          {
+            "id": "8f3edbc8-a3a7-4581-843a-5d4d820cdc79",
+            "ancestors": [],
+            "type": "function",
+            "name": "addMember",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 209,
+              "start": 209
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "name",
+                "type": "String"
+              },
+              {
+                "name": "codeBlock",
+                "type": "CodeBlock"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 9,
+            "comment": {
+              "description": "Allows for the addition of a new member to an existing list of CodeBlocks, storing the updated list under the specified name in the member map.",
+              "params": [
+                {
+                  "name": "name",
+                  "type": "String",
+                  "description": "name of the member to be added to the builder's list of members."
+                },
+                {
+                  "name": "codeBlock",
+                  "type": "CodeBlock",
+                  "description": "code block that is to be added to the list of members associated with the specified `name`."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a reference to the modified `Builder` object."
+              }
+            }
+          },
+          {
+            "id": "d056513c-8f30-403f-8de1-3cbc5a35429d",
+            "ancestors": [],
+            "type": "function",
+            "name": "addValue",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 219,
+              "start": 224
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "memberName",
+                "type": "String"
+              },
+              {
+                "name": "value",
+                "type": "Object"
+              }
+            ],
+            "skip": false,
+            "docLength": 5,
+            "length": 22,
+            "comment": {
+              "description": "Adds a member to a class, taking into account the type of the provided `value`. It returns the updated class with the added member.",
+              "params": [
+                {
+                  "name": "memberName",
+                  "type": "String",
+                  "description": "name of the member being added to the builder."
+                },
+                {
+                  "name": "value",
+                  "type": "Object",
+                  "description": "object being added to the class as a member field and determines the type of the member field based on its data type."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a string representation of the given object."
+              }
+            }
+          },
+          {
+            "id": "78314946-1452-43e4-9128-97287923e3ee",
+            "ancestors": [],
+            "type": "function",
+            "name": "defaultAction",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 273,
+              "start": 273
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "o",
+                "type": "Object"
+              },
+              {
+                "name": "entry",
+                "type": "Entry"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Adds a member to a builder object with the name provided in the `Entry` object and the value provided in the `entry.value`.",
+              "params": [
+                {
+                  "name": "o",
+                  "type": "Object",
+                  "description": "object being built with the addition of the member specified by the `Entry` object passed as an argument to the function."
+                },
+                {
+                  "name": "entry",
+                  "type": "Entry",
+                  "description": "entry object that contains the name and value of a member to be added to the builder."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a `Builder` instance with an added `member` field containing the specified name and value."
+              }
+            }
+          },
+          {
+            "id": "fdce4768-490e-462b-92d2-cc40cbc225e6",
+            "ancestors": [],
+            "type": "function",
+            "name": "visitAnnotation",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 277,
+              "start": 277
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "a",
+                "type": "AnnotationMirror"
+              },
+              {
+                "name": "entry",
+                "type": "Entry"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Adds a member to a builder object with the name provided in the `Entry` entry and the value obtained by calling the `get` method on an `AnnotationMirror` parameter.",
+              "params": [
+                {
+                  "name": "a",
+                  "type": "AnnotationMirror",
+                  "description": "AnnotationMirror object being visited by the `visitAnnotation()` method."
+                },
+                {
+                  "name": "entry",
+                  "type": "Entry",
+                  "description": "name of an annotation that is being visited by the `visitAnnotation()` method."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a `Builder` instance with an added member of the specified name and type."
+              }
+            }
+          },
+          {
+            "id": "a997a3f1-3028-4602-8d0d-a0dd6df10669",
+            "ancestors": [],
+            "type": "function",
+            "name": "visitEnumConstant",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 281,
+              "start": 281
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "c",
+                "type": "VariableElement"
+              },
+              {
+                "name": "entry",
+                "type": "Entry"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Adds an enum constant to a generated builder object. It takes the enum constant's name, type, and simple name as input, and returns a builder with the added constant.",
+              "params": [
+                {
+                  "name": "c",
+                  "type": "VariableElement",
+                  "description": "`VariableElement` object that is being visited by the `visitEnumConstant` method."
+                },
+                {
+                  "name": "entry",
+                  "type": "Entry",
+                  "description": "entry object passed to the `visitEnumConstant` method, providing the name of the enum constant being processed."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a code snippet that adds an enum constant to a Java class with the given name and type."
+              }
+            }
+          },
+          {
+            "id": "e189a2ed-9108-4330-9c1c-cfa1d6594ddc",
+            "ancestors": [],
+            "type": "function",
+            "name": "visitType",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 285,
+              "start": 285
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "t",
+                "type": "TypeMirror"
+              },
+              {
+                "name": "entry",
+                "type": "Entry"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Adds a member to a builders with name entry and type mirror as argument",
+              "params": [
+                {
+                  "name": "t",
+                  "type": "TypeMirror",
+                  "description": "TypeMirror to be processed and is used to add the corresponding type information to the builder object."
+                },
+                {
+                  "name": "entry",
+                  "type": "Entry",
+                  "description": "entry object containing the name and type of a class member to be added to the builder."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a `Builder` object containing a member reference to the specified type."
+              }
+            }
+          },
+          {
+            "id": "c27774d3-bc53-4ad2-a42c-fbb73fdc6ff1",
+            "ancestors": [],
+            "type": "function",
+            "name": "visitArray",
+            "location": {
+              "offset": " ",
+              "indent": 4,
+              "insert": 289,
+              "start": 289
+            },
+            "returns": "Builder",
+            "params": [
+              {
+                "name": "values",
+                "type": "List<? extends AnnotationValue>"
+              },
+              {
+                "name": "entry",
+                "type": "Entry"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 6,
+            "comment": {
+              "description": "Processes a list of annotation values and recursively visits each value, passing it to the `accept` method along with a new entry object representing the current element name.",
+              "params": [
+                {
+                  "name": "values",
+                  "type": "List<? extends AnnotationValue>",
+                  "description": "list of AnnotationValue objects that are to be visited and transformed by the visitor method."
+                },
+                {
+                  "name": "entry",
+                  "type": "Entry",
+                  "description": "entry being visited and provides the name of the entry to be used as the key for the new annotation value."
+                }
+              ],
+              "returns": {
+                "type": "Builder",
+                "description": "a new `Builder` instance with updated annotation values."
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "ArrayTypeName.java",
+    "path": "src/main/java/com/squareup/javapoet/ArrayTypeName.java",
+    "content": {
+      "structured": {
+        "description": "",
+        "image": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<!-- Generated by graphviz version 2.43.0 (0)\n -->\n<!-- Title: com.squareup.javapoet.ArrayTypeName Pages: 1 -->\n<svg width=\"194pt\" height=\"93pt\"\n viewBox=\"0.00 0.00 194.00 93.00\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<g id=\"graph0\" class=\"graph\" transform=\"scale(1 1) rotate(0) translate(4 89)\">\n<title>com.squareup.javapoet.ArrayTypeName</title>\n<!-- Node1 -->\n<g id=\"Node000001\" class=\"node\">\n<title>Node1</title>\n<g id=\"a_Node000001\"><a xlink:title=\" \">\n<polygon fill=\"#999999\" stroke=\"#666666\" points=\"173.5,-30 12.5,-30 12.5,0 173.5,0 173.5,-30\"/>\n<text text-anchor=\"start\" x=\"20.5\" y=\"-18\" font-family=\"Helvetica,sans-Serif\" font-size=\"10.00\">com.squareup.javapoet.Array</text>\n<text text-anchor=\"middle\" x=\"93\" y=\"-7\" font-family=\"Helvetica,sans-Serif\" font-size=\"10.00\">TypeName</text>\n</a>\n</g>\n</g>\n<!-- Node2 -->\n<g id=\"Node000002\" class=\"node\">\n<title>Node2</title>\n<g id=\"a_Node000002\"><a xlink:href=\"classcom_1_1squareup_1_1javapoet_1_1TypeName.html\" target=\"_top\" xlink:title=\" \">\n<polygon fill=\"white\" stroke=\"#666666\" points=\"186,-85 0,-85 0,-66 186,-66 186,-85\"/>\n<text text-anchor=\"middle\" x=\"93\" y=\"-73\" font-family=\"Helvetica,sans-Serif\" font-size=\"10.00\">com.squareup.javapoet.TypeName</text>\n</a>\n</g>\n</g>\n<!-- Node2&#45;&gt;Node1 -->\n<g id=\"edge1_Node000001_Node000002\" class=\"edge\">\n<title>Node2&#45;&gt;Node1</title>\n<g id=\"a_edge1_Node000001_Node000002\"><a xlink:title=\" \">\n<path fill=\"none\" stroke=\"#63b8ff\" d=\"M93,-55.65C93,-47.36 93,-37.78 93,-30.11\"/>\n<polygon fill=\"#63b8ff\" stroke=\"#63b8ff\" points=\"89.5,-55.87 93,-65.87 96.5,-55.87 89.5,-55.87\"/>\n</a>\n</g>\n</g>\n</g>\n</svg>\n",
+        "items": [
+          {
+            "id": "455e7757-f6dd-4bcf-8758-577d47eb4aa6",
+            "ancestors": [],
+            "type": "function",
+            "name": "annotated",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 43,
+              "start": 43
+            },
+            "returns": "ArrayTypeName",
+            "params": [
+              {
+                "name": "annotations",
+                "type": "List<AnnotationSpec>"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Creates a new `ArrayTypeName` instance by combining a specified `componentType` with any provided `AnnotationSpec` instances.",
+              "params": [
+                {
+                  "name": "annotations",
+                  "type": "List<AnnotationSpec>",
+                  "description": "list of AnnotationSpecs that will be applied to the returned ArrayTypeName."
+                }
+              ],
+              "returns": {
+                "type": "ArrayTypeName",
+                "description": "an `ArrayTypeName` object representing the component type and its annotations."
+              }
+            }
+          },
+          {
+            "id": "022b9ff1-3a0c-4705-b420-0508fe86f632",
+            "ancestors": [],
+            "type": "function",
+            "name": "emit",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 47,
+              "start": 47
+            },
+            "returns": "CodeWriter",
+            "params": [
+              {
+                "name": "out",
+                "type": "CodeWriter"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Emits annotations for a given component type.",
+              "params": [
+                {
+                  "name": "out",
+                  "type": "CodeWriter",
+                  "description": "output writer where the annotations are being emitted."
+                }
+              ],
+              "returns": {
+                "type": "CodeWriter",
+                "description": "a `$T[]` annotation."
+              }
+            }
+          },
+          {
+            "id": "d04cc628-ecb9-4534-8fc5-fcaa7eee5f0d",
+            "ancestors": [],
+            "type": "function",
+            "name": "of",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 51,
+              "start": 52
+            },
+            "returns": "ArrayTypeName",
+            "params": [
+              {
+                "name": "componentType",
+                "type": "TypeName"
+              }
+            ],
+            "skip": false,
+            "docLength": 1,
+            "length": 3,
+            "comment": {
+              "description": "Creates an instance of the `ArrayTypeName` class with the specified `componentType`.",
+              "params": [
+                {
+                  "name": "componentType",
+                  "type": "TypeName",
+                  "description": "type of components that will be included in the array returned by the `of()` function."
+                }
+              ],
+              "returns": {
+                "type": "ArrayTypeName",
+                "description": "an `ArrayTypeName` object representing the specified `TypeName`."
+              }
+            }
+          },
+          {
+            "id": "03e90ff3-b7b1-437a-9b69-2f4f3df727f7",
+            "ancestors": [],
+            "type": "function",
+            "name": "of",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 56,
+              "start": 57
+            },
+            "returns": "ArrayTypeName",
+            "params": [
+              {
+                "name": "componentType",
+                "type": "Type"
+              }
+            ],
+            "skip": false,
+            "docLength": 1,
+            "length": 3,
+            "comment": {
+              "description": "Generates a documentation for code given to it.",
+              "params": [
+                {
+                  "name": "componentType",
+                  "type": "Type",
+                  "description": "type of the component being worked with, which is used to determine the appropriate name for the array type returned by the function."
+                }
+              ],
+              "returns": {
+                "type": "ArrayTypeName",
+                "description": "an array type name."
+              }
+            }
+          },
+          {
+            "id": "af31b4a7-c890-4e58-a56d-3a21c2a3759a",
+            "ancestors": [],
+            "type": "function",
+            "name": "get",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 61,
+              "start": 62
+            },
+            "returns": "ArrayTypeName",
+            "params": [
+              {
+                "name": "mirror",
+                "type": "ArrayType"
+              }
+            ],
+            "skip": false,
+            "docLength": 1,
+            "length": 3,
+            "comment": {
+              "description": "Retrieves an ArrayTypeName by passing a mirror object and an empty map as parameters.",
+              "params": [
+                {
+                  "name": "mirror",
+                  "type": "ArrayType",
+                  "description": "type mirror for which the `get` method is called, and it is used to provide information about the type mirror that is necessary for the method to return the correct `ArrayTypeName`."
+                }
+              ],
+              "returns": {
+                "type": "ArrayTypeName",
+                "description": "an `ArrayTypeName`."
+              }
+            }
+          },
+          {
+            "id": "b2201caf-9c2c-4cc8-8d54-a125d79ca3e7",
+            "ancestors": [],
+            "type": "function",
+            "name": "get",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 66,
+              "start": 66
+            },
+            "returns": "ArrayTypeName",
+            "params": [
+              {
+                "name": "mirror",
+                "type": "ArrayType"
+              },
+              {
+                "name": "typeVariables",
+                "type": "Map<TypeParameterElement, TypeVariableName>"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 4,
+            "comment": {
+              "description": "Creates an array type name by mirroring the component type and passing it to a new instance of `ArrayTypeName`.",
+              "params": [
+                {
+                  "name": "mirror",
+                  "type": "ArrayType",
+                  "description": "array being wrapped with the `ArrayTypeName`."
+                },
+                {
+                  "name": "typeVariables",
+                  "type": "Map<TypeParameterElement, TypeVariableName>",
+                  "description": "Map of <TypeParameterElement, TypeVariableName> that contains information about the types of the elements in the mirrored array."
+                }
+              ],
+              "returns": {
+                "type": "ArrayTypeName",
+                "description": "a new `ArrayTypeName` object created from the component type of the mirror and the type variables provided."
+              }
+            }
+          },
+          {
+            "id": "b5fa0fb0-9e67-452c-8ddc-534e676e641f",
+            "ancestors": [],
+            "type": "function",
+            "name": "get",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 71,
+              "start": 72
+            },
+            "returns": "ArrayTypeName",
+            "params": [
+              {
+                "name": "type",
+                "type": "GenericArrayType"
+              }
+            ],
+            "skip": false,
+            "docLength": 1,
+            "length": 3,
+            "comment": {
+              "description": "Retrieves an array type name based on a generic array type and any type variables involved.",
+              "params": [
+                {
+                  "name": "type",
+                  "type": "GenericArrayType",
+                  "description": "generic array type to which the documentation should be generated."
+                }
+              ],
+              "returns": {
+                "type": "ArrayTypeName",
+                "description": "an array type name."
+              }
+            }
+          },
+          {
+            "id": "3aa6bedd-5fc9-4c79-8177-303a6d36239d",
+            "ancestors": [],
+            "type": "function",
+            "name": "get",
+            "location": {
+              "offset": " ",
+              "indent": 2,
+              "insert": 76,
+              "start": 76
+            },
+            "returns": "ArrayTypeName",
+            "params": [
+              {
+                "name": "type",
+                "type": "GenericArrayType"
+              },
+              {
+                "name": "map",
+                "type": "Map<Type, TypeVariableName>"
+              }
+            ],
+            "skip": false,
+            "docLength": null,
+            "length": 3,
+            "comment": {
+              "description": "Returns an `ArrayTypeName` instance based on a given `GenericArrayType` and a `Map` of type variables, by recursively calling itself on the component type of the array and the given map.",
+              "params": [
+                {
+                  "name": "type",
+                  "type": "GenericArrayType",
+                  "description": "generic type of the array being generated, which is used to determine the type of the elements in the array."
+                },
+                {
+                  "name": "map",
+                  "type": "Map<Type, TypeVariableName>",
+                  "description": "mapping between type variables and their corresponding names."
+                }
+              ],
+              "returns": {
+                "type": "ArrayTypeName",
+                "description": "an `ArrayTypeName` object representing the component type of the given generic array type."
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+]
