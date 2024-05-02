@@ -1,0 +1,85 @@
+[
+  {
+    "name": "script.js",
+    "path": "1.x/javapoet/script.js",
+    "content": {
+      "structured": {
+        "description": "",
+        "items": [
+          {
+            "id": "57b04905-8be5-4f04-99db-42678b42d3d4",
+            "ancestors": [],
+            "type": "function",
+            "name": "show",
+            "location": {
+              "offset": " ",
+              "indent": 0,
+              "insert": 1,
+              "start": 1
+            },
+            "params": [
+              {
+                "name": "type",
+                "value": null,
+                "type": null
+              }
+            ],
+            "returns": false,
+            "skip": false,
+            "jsx": false,
+            "docLength": null,
+            "length": 14,
+            "comment": {
+              "description": "Updates the display state of HTML elements based on a given type parameter, by setting the `display` property to '' and applying an alternative styles class depending on the element's methods property modulo 2.",
+              "params": [
+                {
+                  "name": "type",
+                  "type": "integer",
+                  "value": null,
+                  "description": "16-bit value that determines which method will be displayed, with values ranging from 0 to 65535."
+                }
+              ],
+              "returns": null
+            }
+          },
+          {
+            "id": "c81eaf1d-38fc-4498-a935-cc21e14c4c78",
+            "ancestors": [],
+            "type": "function",
+            "name": "updateTabs",
+            "location": {
+              "offset": " ",
+              "indent": 0,
+              "insert": 16,
+              "start": 16
+            },
+            "params": [
+              {
+                "name": "type",
+                "value": null,
+                "type": null
+              }
+            ],
+            "returns": false,
+            "skip": false,
+            "jsx": false,
+            "docLength": null,
+            "length": 15,
+            "comment": {
+              "description": "Updates the CSS class and content of HTML elements with a specific ID based on the value of a parameter `type`.",
+              "params": [
+                {
+                  "name": "type",
+                  "type": "string",
+                  "value": null,
+                  "description": "specific tab to be updated."
+                }
+              ],
+              "returns": null
+            }
+          }
+        ]
+      }
+    }
+  }
+]

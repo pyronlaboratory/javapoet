@@ -1,3 +1,11 @@
+/**
+ * @description Updates the display state of HTML elements based on a given type
+ * parameter, by setting the `display` property to '' and applying an alternative
+ * styles class depending on the element's methods property modulo 2.
+ * 
+ * @param { integer } type - 16-bit value that determines which method will be
+ * displayed, with values ranging from 0 to 65535.
+ */
 function show(type)
 {
     count = 0;
@@ -13,6 +21,12 @@ function show(type)
     updateTabs(type);
 }
 
+/**
+ * @description Updates the CSS class and content of HTML elements with a specific
+ * ID based on the value of a parameter `type`.
+ * 
+ * @param { string } type - specific tab to be updated.
+ */
 function updateTabs(type)
 {
     for (var value in tabs) {
