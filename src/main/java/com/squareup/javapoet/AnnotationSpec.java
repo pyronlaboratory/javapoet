@@ -60,25 +60,7 @@ public final class AnnotationSpec {
     this.members = Util.immutableMultimap(builder.members);
   }
 
-  /**
-   * generates a Java code snippet for an entity based on its attributes and annotations.
-   * It takes a `CodeWriter` object and a boolean flag indicating whether the code
-   * should be indented or not.
-   * 
-   * @param codeWriter 3rd party library that will be writing Java code to produce the
-   * desired output.
-   * 
-   * 	- `codeWriter`: This is an instance of `CodeWriter`, which is used to generate
-   * Java code for model classes.
-   * 	- `inline`: This is a boolean parameter that indicates whether the code should
-   * be generated inline or as a separate method call.
-   * 	- `type`: This is the type of the model class being generated, which is used to
-   * determine the appropriate annotations and code generation.
-   * 
-   * @param inline whether the member annotations should be written inline or in a
-   * separate line, with inline set to true to write them on the same line as the class
-   * name and false otherwise.
-   */
+ 
   void emit(CodeWriter codeWriter, boolean inline) throws IOException {
     String whitespace = inline ? "" : "\n";
     String memberSeparator = inline ? ", " : ",\n";
