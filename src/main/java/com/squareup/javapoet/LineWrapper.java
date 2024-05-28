@@ -52,12 +52,21 @@ final class LineWrapper {
     this.columnLimit = columnLimit;
   }
 
-  /** @return the last emitted char or {@link Character#MIN_VALUE} if nothing emitted yet. */
+  /**
+   * Retrieves the last character of a given string or buffer object `out`.
+   * 
+   * @returns the last character of a string `out`.
+   */
   char lastChar() {
     return out.lastChar;
   }
 
-  /** Emit {@code s}. This may be buffered to permit line wraps to be inserted. */
+  /**
+   * Appends a string to an output stream, checking for overflow and wrapping as needed.
+   * It returns after each successful append.
+   * 
+   * @param s string to be appended to the buffer.
+   */
   void append(String s) throws IOException {
     if (closed) throw new IllegalStateException("closed");
 
@@ -84,7 +93,14 @@ final class LineWrapper {
         : column + s.length();
   }
 
-  /** Emit either a space or a newline character. */
+  /**
+   * Increments a column and sets the next flush type to `SPACE`. It also updates the
+   * `indentLevel` variable with the given value.
+   * 
+   * @param indentLevel level of indentation to apply to the current line of code being
+   * wrapped, and is used to determine the appropriate amount of space to add to the
+   * line for proper formatting.
+   */
   void wrappingSpace(int indentLevel) throws IOException {
     if (closed) throw new IllegalStateException("closed");
 
@@ -94,7 +110,13 @@ final class LineWrapper {
     this.indentLevel = indentLevel;
   }
 
-  /** Emit a newline character if the line will exceed it's limit, otherwise do nothing. */
+  /**
+   * Updates the current instance's indent level and flushes the buffer if necessary,
+   * ensuring the next call to the function will have a new line.
+   * 
+   * @param indentLevel level of indentation for the output, and it is used to control
+   * the amount of space added before each line of output in the `zeroWidthSpace` function.
+   */
   void zeroWidthSpace(int indentLevel) throws IOException {
     if (closed) throw new IllegalStateException("closed");
 
@@ -104,13 +126,22 @@ final class LineWrapper {
     this.indentLevel = indentLevel;
   }
 
-  /** Flush any outstanding text and forbid future writes to this line wrapper. */
+  /**
+   * Flushed any pending data and marked the stream as closed.
+   */
   void close() throws IOException {
     if (nextFlush != null) flush(nextFlush);
     closed = true;
   }
 
-  /** Write the space followed by any buffered text that follows it. */
+  /**
+   * Modifies output based on the provided ` flushType`. It appends a newline, spaces,
+   * or does nothing depending on the type, then resets the buffer and nextFlush.
+   * 
+   * @param flushType type of flush operation to perform, which can be either `WRAP`,
+   * `SPACE`, or `EMPTY`, and determines how much space to add to the buffer before
+   * appending its contents.
+   */
   private void flush(FlushType flushType) throws IOException {
     switch (flushType) {
       case WRAP:
@@ -150,6 +181,14 @@ final class LineWrapper {
       this.delegate = delegate;
     }
 
+    /**
+     * Adds a sequence of characters to an `Appendable` object, while maintaining the
+     * last character of the previous append operation.
+     * 
+     * @param csq 0-length sequence of characters to be appended to the output stream.
+     * 
+     * @returns the result of calling the delegated `append` method with the provided `CharSequence`.
+     */
     @Override public Appendable append(CharSequence csq) throws IOException {
       int length = csq.length();
       if (length != 0) {
@@ -158,11 +197,34 @@ final class LineWrapper {
       return delegate.append(csq);
     }
 
+    /**
+     * Takes a subsequence of a given `CharSequence` and returns a new instance of
+     * `Appendable` with the appended subsequence.
+     * 
+     * @param csq CharSequence that is being operated on by the `append()` method.
+     * 
+     * @param start 0-based index of the subsequence within the original sequence that
+     * the method seeks to append.
+     * 
+     * @param end position of the last character to be appended in the subsequence returned
+     * by `csq.subSequence()`.
+     * 
+     * @returns a new instance of the `Appendable` interface, which represents the appended
+     * sequence.
+     */
     @Override public Appendable append(CharSequence csq, int start, int end) throws IOException {
       CharSequence sub = csq.subSequence(start, end);
       return append(sub);
     }
 
+    /**
+     * Appends the character `c` to the contents of its delegating function, `delegate`.
+     * 
+     * @param c 8-bit binary code that is appended to the output of the `delegate` method,
+     * which is also passed as an argument to the `append` method.
+     * 
+     * @returns a single character.
+     */
     @Override public Appendable append(char c) throws IOException {
       lastChar = c;
       return delegate.append(c);
