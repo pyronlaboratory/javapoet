@@ -26,8 +26,8 @@ import org.junit.Test;
  */
 public final class ClassNameNoPackageTest {
   /**
-   * verifies that a class in the default package has the expected properties, including
-   * an empty package name and a simple name matching the class name.
+   * Verifies that a class in the default package has the expected package name, simple
+   * name, and toString representation.
    */
   @Test public void shouldSupportClassInDefaultPackage() {
     ClassName className = ClassName.get(ClassNameNoPackageTest.class);
